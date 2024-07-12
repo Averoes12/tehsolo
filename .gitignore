@@ -1,0 +1,53 @@
+# Ignore the CodeIgniter system directory
+/vendor/
+/writable/cache/
+/writable/logs/
+/writable/session/
+/writable/debugbar/
+/writable/uploads/
+
+# Ignore environment files
+.env
+
+# Ignore IDE and editor specific files
+.vscode/
+.idea/
+*.swp
+*~
+
+# Ignore OS specific files
+.DS_Store
+Thumbs.db
+
+# Ignore composer lock file
+composer.lock
+
+# Ignore build files
+/build/
+
+# Ignore npm and node_modules
+node_modules/
+npm-debug.log
+yarn.lock
+
+# Ignore coverage reports
+coverage/
+
+# Ignore PHPUnit result cache
+phpunit.result.cache
+
+# Ignore personal configuration files
+*.local.php
+
+# Ignore backup files
+*.bak
+*.backup
+
+# Ignore specific CI4 files that should not be in VCS
+public/.htaccess
+public/index.php
+
+# Ignore all the hidden files
+.*
+!.gitignore
+!.env
