@@ -1,10 +1,10 @@
 # Ignore the CodeIgniter system directory
 /vendor/
-/writable/cache/
-/writable/logs/
-/writable/session/
-/writable/debugbar/
-/writable/uploads/
+/writable/cache/*
+/writable/logs/*
+/writable/session/*
+/writable/debugbar/*
+/writable/uploads/*
 
 # Ignore environment files
 .env
@@ -43,11 +43,6 @@ phpunit.result.cache
 *.bak
 *.backup
 
-# Ignore specific CI4 files that should not be in VCS
-public/.htaccess
-public/index.php
-
 # Ignore all the hidden files
 .*
 !.gitignore
-!.env
