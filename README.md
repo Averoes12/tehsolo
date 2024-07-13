@@ -1,5 +1,35 @@
 # CodeIgniter 4 Framework
 
+## How to build this?
+
+# Clone repository
+git clone <repository-url>
+
+# Masuk ke direktori proyek
+cd <project-directory>
+
+# Install Composer jika belum terinstal
+php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
+php composer-setup.php
+php -r "unlink('composer-setup.php');"
+sudo mv composer.phar /usr/local/bin/composer
+
+# Install dependensi dengan Composer
+composer install
+
+# Buat direktori writable dan subdirektorinya
+mkdir -p writable/cache writable/logs writable/session writable/debugbar writable/uploads
+
+# Set permissions untuk direktori writable
+chmod -R 0777 writable
+
+# Jika diperlukan, buat file .env
+cp env.example .env  # Sesuaikan dengan file template yang Anda miliki
+
+# Setup file .env sesuai kebutuhan Anda
+nano .env  # Atau gunakan editor teks pilihan Anda
+
+
 ## What is CodeIgniter?
 
 CodeIgniter is a PHP full-stack web framework that is light, fast, flexible and secure.
