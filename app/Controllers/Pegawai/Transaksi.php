@@ -58,7 +58,12 @@ class Transaksi extends BaseController
   {
     if ($this->request->isAJAX()) {
       $cabang = $this->cabangmodel->findAll();
-      $menu = $this->menuminuman->findAll();
+      $menu = $this->menuminuman
+        ->groupStart()
+        ->where('id_cabang', 0)
+        ->orWhere('id_cabang', session('id_cabang'))
+        ->groupEnd()
+        ->findAll();
       $msg = [
         'data' => view('pegawai/transaksi/modalformtambah', ['cabang' => $cabang, 'menu' => $menu])
       ];
@@ -98,7 +103,11 @@ class Transaksi extends BaseController
     $data = [
       'title' => 'Edit Transaksi',
       'trx' =>  $this->transaksimodel->find($id_trx),
-      'menus' => $this->menuminuman->findAll(),
+      'menus' => $this->menuminuman->groupStart()
+        ->where('id_cabang', 0)
+        ->orWhere('id_cabang', session('id_cabang'))
+        ->groupEnd()
+        ->findAll(),
       'menu' => $this->menuminuman->find($id_menu),
       'validation' => \Config\Services::validation(),
     ];
@@ -143,7 +152,11 @@ class Transaksi extends BaseController
       $data = [
         'title' => 'Edit Transaksi',
         'trx' =>  $this->transaksimodel->find($id_trx),
-        'menus' => $this->menuminuman->findAll(),
+        'menus' => $this->menuminuman->groupStart()
+          ->where('id_cabang', 0)
+          ->orWhere('id_cabang', session('id_cabang'))
+          ->groupEnd()
+          ->findAll(),
         'menu' => $this->menuminuman->find($id_menu),
         'validation' => \Config\Services::validation()
       ];
