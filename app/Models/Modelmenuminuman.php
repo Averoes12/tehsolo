@@ -11,9 +11,18 @@ class Modelmenuminuman extends Model
 
     protected $allowedFields = ['nama_menu', 'harga'];
 
-    public function cariData($cari)
+    public function cariData($cari, $limit, $offset)
     {
-        return $this->table('menu')->like('nama_menu', $cari);
+        $builder = $this->table('menu');
+        $builder->select('menu.id, menu.nama_menu, menu.harga, menu.stok, cabang.nama_cabang');
+        $builder->join('cabang', 'menu.id_cabang = cabang.id', 'left');
+        $builder->like('menu.nama_menu', $cari);
+        $builder->groupBy('menu.id');
+        $builder->limit($limit, $offset);
+        $query = $builder->get();
+
+        return $query->getResultArray();
+
     }
 
     public function addMenu($namamenu, $hargamenu, $stok, $id_cabang)
@@ -22,7 +31,7 @@ class Modelmenuminuman extends Model
         $builder = $db->table('menu');
         $data = [
             'nama_menu' => $namamenu,
-            'harga' => $hargamenu,
+            'harga' => floatval($hargamenu),
             'stok' => intval($stok),
             'id_cabang' => intval($id_cabang)
         ];
@@ -61,5 +70,35 @@ class Modelmenuminuman extends Model
         $result = $query->getRowArray();
 
         return $result['count'];
+    }
+
+    public function updateMenu($id, $nama_menu, $harga, $stok, $id_cabang)
+    {
+
+        $db = db_connect();
+        $builder = $db->table('menu');
+        $data = [
+            'nama_menu' => $nama_menu,
+            'harga' => floatval($harga),
+            'stok' => intval($stok),
+            'id_cabang' => intval($id_cabang)
+        ];
+
+        if ($builder->where('id', $id)->update($data)) {
+            $msg = [
+                'sukses' => 'Update Menu Berhasil'
+            ];
+        } else {
+            $msg = [
+                'error' => 'Gagal mengupdate menu'
+            ];
+        }
+
+        return $msg;
+    }
+
+    public function getMenuById($id)
+    {
+        return $this->table('menu')->where('id', $id)->first();
     }
 }

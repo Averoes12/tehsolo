@@ -78,9 +78,11 @@ class UsersModel extends Model
         return $msg;
     }
 
-    public function updateUser($username, $password, $id_cabang, $id){
+    public function updateUser($username, $password, $id_cabang, $id)
+    {
 
-        $builder = $this->table('users');
+        $db = db_connect();
+        $builder = $db->table('users');
         $data = [
             'username' => $username,
             'password' => password_hash($password, PASSWORD_DEFAULT),

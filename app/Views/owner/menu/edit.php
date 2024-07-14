@@ -26,7 +26,7 @@
                 </div>
                 <div class="form-group">
                     <label>Harga</label>
-                    <input type="text" class="form-control <?= ($validation->hasError('harga')) ? 'is-invalid' : '' ?>" name="harga" placeholder="Harga" value="<?= $menu['harga'] ?>">
+                    <input type="number" min="1" class="form-control <?= ($validation->hasError('harga')) ? 'is-invalid' : '' ?>" name="harga" placeholder="Harga" value="<?= $menu['harga'] ?>">
                     <?php if ($validation->hasError('harga')): ?>
                         <div class="invalid-feedback">
                             <?= $validation->getError('harga') ?>
@@ -35,7 +35,7 @@
                 </div>
                 <div class="form-group">
                     <label>Stok</label>
-                    <input type="text" class="form-control <?= ($validation->hasError('stok')) ? 'is-invalid' : '' ?>" name="stok" placeholder="Stok" value="<?= $menu['stok'] ?>">
+                    <input type="number" min="0" class="form-control <?= ($validation->hasError('stok')) ? 'is-invalid' : '' ?>" name="stok" placeholder="Stok" value="<?= $menu['stok'] ?>">
                     <?php if ($validation->hasError('stok')): ?>
                         <div class="invalid-feedback">
                             <?= $validation->getError('stok') ?>
@@ -44,7 +44,8 @@
                 </div>
                 <div class="form-group">
                     <label>Cabang</label>
-                    <select name="id_cabang" class="form-control <?= ($validation->hasError('id_cabang')) ? 'is-invalid' : '' ?>">
+                    <select name="cabang" class="form-control <?= ($validation->hasError('id_cabang')) ? 'is-invalid' : '' ?>">
+                        <option value="">All</option>
                         <?php foreach ($cabang as $c) : ?>
                             <option value="<?= $c['id'] ?>" <?= $c['id'] == $menu['id_cabang'] ? 'selected' : '' ?>>
                                 <?= $c['nama_cabang'] ?>

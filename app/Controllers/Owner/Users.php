@@ -159,7 +159,7 @@ class Users extends BaseController
             echo view('owner/users/edit', $data);
         } else {
             
-            $msg = $this->usersmodel->updateUser($id, $username, $password, $id_cabang);
+            $msg = $this->usersmodel->updateUser($username, $password, $id_cabang, $id);
 
             echo json_encode($msg);
             

@@ -5,7 +5,7 @@
 <?= $this->endsection() ?>
 
 <?= $this->section('breadcumb-active') ?>
-<li class="breadcrumb-item active">Daftar Cabang</li>
+<li class="breadcrumb-item active">Daftar Menu</li>
 <?= $this->endSection() ?>
 
 <?= $this->section('isi') ?>
@@ -26,7 +26,7 @@
     </div>
     <div class="card-body">
 
-        <form method="POST" action="<?= base_url('owner/nmenu/data') ?>">
+        <form method="POST" action="<?= base_url('owner/menu/data') ?>">
             <?= csrf_field(); ?>
             <div class="input-group mb-3">
                 <input type="text" class="form-control" placeholder="Cari Nama Menu minuman" name="carimenu" autofocus value="<?= $cari; ?>">
@@ -49,33 +49,38 @@
 
             <tbody>
                 <?php $nomor = 1 + (($nohalaman - 1) * 5);
-                foreach ($datamenu as $row) :
+                if (count($datamenu) > 0) {
+                    foreach ($datamenu as $row) :
                 ?>
-                    <tr>
-                        <td ><?= $nomor++; ?></td>
-                        <td <?= $row['stok'] < 10 ? "style='color: red;'" : "" ?> ><?= $row['nama_menu']; ?></td>
-                        <td <?= $row['stok'] < 10 ? "style='color: red;'" : "" ?>><?= $row['harga']; ?></td>
-                        <td <?= $row['stok'] < 10 ? "style='color: red;'" : "" ?>><?= $row['stok'] ?></td>
-                        <td <?= $row['stok'] < 10 ? "style='color: red;'" : "" ?>><?= ($row['nama_cabang'] == null || $row['nama_cabang'] == 0) ? "All" : $row['nama_cabang'] ?></td>
-                        <td align="right">
-                            <button type="button" class="btn btn-outline-danger btn-sm" onclick="hapus('<?= $row['id'] ?>')">
-                                <i class="fa fa-trash-alt"></i>
-                            </button>
-                            <a href="<?= base_url('owner/menu/edit/' . $row['id']) ?>" class="btn btn-primary btn-sm"> <i class="fas fa-edit"></i></a>
-                        </td>
-                    </tr>
-                <?php endforeach; ?>
+                        <tr>
+                            <td><?= $nomor++; ?></td>
+                            <td <?= $row['stok'] < 10 ? "style='color: red;'" : "" ?>><?= $row['nama_menu']; ?></td>
+                            <td <?= $row['stok'] < 10 ? "style='color: red;'" : "" ?>><?= number_format($row['harga']); ?></td>
+                            <td <?= $row['stok'] < 10 ? "style='color: red;'" : "" ?>><?= number_format($row['stok']) ?></td>
+                            <td <?= $row['stok'] < 10 ? "style='color: red;'" : "" ?>><?= ($row['nama_cabang'] == null || $row['nama_cabang'] == 0) ? "All" : $row['nama_cabang'] ?></td>
+                            <td align="right">
+                                <button type="button" class="btn btn-outline-danger btn-sm" onclick="hapus('<?= $row['id'] ?>')">
+                                    <i class="fa fa-trash-alt"></i>
+                                </button>
+                                <a href="<?= base_url('owner/menu/edit/' . $row['id']) ?>" class="btn btn-primary btn-sm"> <i class="fas fa-edit"></i></a>
+                            </td>
+                        </tr>
+                    <?php endforeach;
+                } else { ?>
+                    <td colspan="6" align="center">Nothind data found</td>
+                <?php } ?>
             </tbody>
         </table>
 
         <div class="float-center">
-            <?= $pager->links('owner/nmenu', 'paging_data'); ?>
+            <?= $pager->links('owner/menu', 'paging_data'); ?>
         </div>
         <!-- /.card-footer-->
     </div>
 </div>
 <div class="viewmodal" style="display: none;"></div>
 <script>
+
     function hapus(kode) {
         swal({
                 title: "Hapus Data Menu",
@@ -125,6 +130,7 @@
                         $('.viewmodal').html(response.data).show();
                         $('#modaltambahmenu').on('show.bs.modal', function(e) {
                             $('#namamenu').focus();
+                            $(".select2").select2();
                         });
                         $('#modaltambahmenu').modal('show');
                     }

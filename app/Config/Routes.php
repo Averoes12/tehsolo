@@ -42,6 +42,17 @@ $routes->delete('owner/cabang/hapus/(:segment)', 'Owner\Cabang::hapus/$1', ['fil
 
 //Pegawai
 $routes->get('pegawai/home', 'Pegawai\Home::index', ['filter' => 'pegawaiFilter']);
+$routes->get('pegawai/transaksi', 'Pegawai\Transaksi::data', ['filter' => 'pegawaiFilter']);
+$routes->get('pegawai/transaksi/data', 'Pegawai\Transaksi::data', ['filter' => 'pegawaiFilter']);
+$routes->post('pegawai/transaksi/data', 'Pegawai\Transaksi::data', ['filter' => 'pegawaiFilter']);
+$routes->get('pegawai/transaksi/formTambah', 'Pegawai\Transaksi::formTambah', ['filter' => 'pegawaiFilter']);
+$routes->post('pegawai/transaksi/simpandata', 'Pegawai\Transaksi::simpandata', ['filter' => 'pegawaiFilter']);
+$routes->get('pegawai/transaksi/edit/(:segment)', 'Pegawai\Transaksi::edit/$1', ['filter' => 'pegawaiFilter']);
+$routes->post('pegawai/transaksi/update/(:segment)', 'Pegawai\Transaksi::update/$1', ['filter' => 'pegawaiFilter']);
+$routes->get('pegawai/transaksi/getMenuById/(:segment)', 'Pegawai\Transaksi::getMenuById/$1', ['filter' => 'pegawaiFilter']);
+
+
+
 
 
 //$routes->get('/', 'Layout::home');

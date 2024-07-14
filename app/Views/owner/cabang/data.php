@@ -48,21 +48,25 @@
 
             <tbody>
                 <?php $nomor = 1 + (($nohalaman - 1) * 5);
-                foreach ($datacabang as $row) :
+                if (count($datacabang) > 0) {
+                    foreach ($datacabang as $row) :
                 ?>
-                    <tr>
-                        <td><?= $nomor++; ?></td>
-                        <td><?= $row['nama_cabang']; ?></td>
-                        <td><?= $row['alamat']; ?></td>
-                        <td><?= $row['telepon']; ?></td>
-                        <td>
-                            <button type="button" class="btn btn-outline-danger btn-sm" onclick="hapus('<?= $row['id'] ?>')">
-                                <i class="fa fa-trash-alt"></i>
-                            </button>
-                            <a href="<?= base_url('owner/cabang/edit/' . $row['id']) ?>" class="btn btn-primary btn-sm"> <i class="fas fa-edit"></i></a>
-                        </td>
-                    </tr>
-                <?php endforeach; ?>
+                        <tr>
+                            <td><?= $nomor++; ?></td>
+                            <td><?= $row['nama_cabang']; ?></td>
+                            <td><?= $row['alamat']; ?></td>
+                            <td><?= $row['telepon']; ?></td>
+                            <td>
+                                <button type="button" class="btn btn-outline-danger btn-sm" onclick="hapus('<?= $row['id'] ?>')">
+                                    <i class="fa fa-trash-alt"></i>
+                                </button>
+                                <a href="<?= base_url('owner/cabang/edit/' . $row['id']) ?>" class="btn btn-primary btn-sm"> <i class="fas fa-edit"></i></a>
+                            </td>
+                        </tr>
+                    <?php endforeach;
+                } else { ?>
+                <td colspan="5" align="center">Nothing data found</td>
+                <?php } ?>
             </tbody>
         </table>
 

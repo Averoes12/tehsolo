@@ -3,7 +3,7 @@
 <?= $this->section('nav') ?>
 <li class="nav-item">
     <a href="<?= site_url('pegawai/home'); ?>" class="nav-link">
-        <i class="nav-icon fas fa-tachometer-alt"></i>
+        <i class="nav-icon fas fa-home"></i>
         <p>
             Home
         </p>
@@ -11,7 +11,7 @@
 </li>
 <li class="nav-item has-treeview">
     <a href="<?= site_url('pegawai/transaksi'); ?>" class="nav-link">
-        <i class="nav-icon fas fa-tachometer-alt"></i>
+        <i class="nav-icon fas fa-receipt"></i>
         <p>
             Daftar Transaksi
         </p>

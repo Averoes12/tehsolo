@@ -3,12 +3,21 @@
 namespace App\Controllers\Owner;
 
 use App\Controllers\BaseController;
-use CodeIgniter\HTTP\ResponseInterface;
+use App\Models\HomeModel;
 
 class Home extends BaseController
 {
     public function index()
     {
-        return view('owner/home');
+        $homeModel = new HomeModel();
+
+        $data['totalTransaksi'] = $homeModel->getTotalTransaksi();
+        $data['totalIncome'] = $homeModel->getTotalIncome();
+        $data['totalOutcome'] = $homeModel->getTotalOutcome();
+        $data['transaksiByTanggal'] = $homeModel->getTransaksiByTanggal();
+        $data['transaksiByCabang'] = $homeModel->getTransaksiByCabang();
+        $data['transaksiByMenu'] = $homeModel->getTransaksiByMenu();
+
+        return view('owner/home', $data);
     }
 }

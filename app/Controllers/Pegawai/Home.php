@@ -3,12 +3,13 @@
 namespace App\Controllers\Pegawai;
 
 use App\Controllers\BaseController;
-use CodeIgniter\HTTP\ResponseInterface;
+use App\Models\TransaksiPegawai;
 
 class Home extends BaseController
 {
     public function index()
     {
+
         return view('pegawai/home');
     }
 }

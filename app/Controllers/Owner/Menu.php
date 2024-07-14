@@ -33,7 +33,7 @@ class Menu extends BaseController
         $offset = ($noHalaman - 1) * $limit;
         $totalRows = $this->menuminuman->getCount();
 
-        $dataMenu = $cari ? $this->menuminuman->cariData($cari) : $this->menuminuman->getAllData($limit, $offset);
+        $dataMenu = $cari ? $this->menuminuman->cariData($cari, $limit, $offset) : $this->menuminuman->getAllData($limit, $offset);
         $cabang = $this->cabangmodel->findAll();
         $pager = \Config\Services::pager();
         $pager->makeLinks($noHalaman, $limit, $totalRows, 'default_full', 3);
@@ -97,6 +97,12 @@ class Menu extends BaseController
 
     function update($id_menu)
     {
+
+        $namamenu = $this->request->getVar('namamenu');
+        $hargamenu = $this->request->getVar('harga');
+        $stok = $this->request->getVar('stok');
+        $id_cabang = $this->request->getVar('cabang');
+
         $rules = [
             'namamenu' => [
                 'rules' => 'required',
@@ -118,29 +124,20 @@ class Menu extends BaseController
                     'numeric' => 'Stok harus berupa angka'
                 ]
             ],
-            'id_cabang' => [
-                'rules' => 'required',
-                'errors' => [
-                    'required' => 'Cabang wajib diisi',
-                    'numeric' => 'Cabang harus berupa angka'
-                ]
-            ]
         ];
 
         if (!$this->validate($rules)) {
             $data = [
                 'title' => 'Edit Menu',
                 'menu' => $this->menuminuman->find($id_menu),
+                'cabang' => $this->cabangmodel->findAll(),
                 'validation' => \Config\Services::validation()
             ];
             echo view('owner/menu/edit', $data);
         } else {
-            $this->menuminuman->update($id_menu, [
-                'nama_menu' => $this->request->getPost('namamenu'),
-                'harga' => $this->request->getPost('harga'),
-                'stok' => $this->request->getPost('stok'),
-                'id_cabang'=> $this->request->getPost('id_cabang'),
-            ]);
+            $msg = $this->menuminuman->updateMenu($id_menu, $namamenu, $hargamenu, $stok, $id_cabang);
+
+            echo json_encode($msg);
 
             session()->setFlashdata('berhasil', 'Data Menu Berhasil Diedit');
             return redirect()->to(base_url('owner/menu/data'));
