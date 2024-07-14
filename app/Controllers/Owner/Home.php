@@ -17,6 +17,8 @@ class Home extends BaseController
         $data['transaksiByTanggal'] = $homeModel->getTransaksiByTanggal();
         $data['transaksiByCabang'] = $homeModel->getTransaksiByCabang();
         $data['transaksiByMenu'] = $homeModel->getTransaksiByMenu();
+        $data['laporanKeuangan'] = $homeModel->getLaporanKeuanganPerCabang();
+
 
         return view('owner/home', $data);
     }

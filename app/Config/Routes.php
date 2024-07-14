@@ -39,9 +39,19 @@ $routes->post('owner/cabang/simpandata', 'Owner\Cabang::simpandata', ['filter' =
 $routes->get('owner/cabang/edit/(:segment)', 'Owner\Cabang::edit/$1', ['filter' => 'ownerFilter']);
 $routes->post('owner/cabang/update/(:segment)', 'Owner\Cabang::update/$1', ['filter' => 'ownerFilter']);
 $routes->delete('owner/cabang/hapus/(:segment)', 'Owner\Cabang::hapus/$1', ['filter' => 'ownerFilter']);
+// transaksi
+$routes->get('owner/transaksi', 'Owner\Transaksi::data', ['filter' => 'ownerFilter']);
+$routes->get('owner/transaksi/data', 'Owner\Transaksi::data', ['filter' => 'ownerFilter']);
+$routes->post('owner/transaksi/data', 'Owner\Transaksi::data', ['filter' => 'ownerFilter']);
+$routes->get('owner/transaksi/formTambah', 'Owner\Transaksi::formTambah', ['filter' => 'ownerFilter']);
+$routes->post('owner/transaksi/simpandata', 'Owner\Transaksi::simpandata', ['filter' => 'ownerFilter']);
+$routes->get('owner/transaksi/edit/(:segment)', 'Owner\Transaksi::edit/$1', ['filter' => 'ownerFilter']);
+$routes->post('owner/transaksi/update/(:segment)', 'Owner\Transaksi::update/$1', ['filter' => 'ownerFilter']);
+$routes->get('owner/transaksi/getMenuById/(:segment)', 'Owner\Transaksi::getMenuById/$1', ['filter' => 'ownerFilter']);
 
 //Pegawai
 $routes->get('pegawai/home', 'Pegawai\Home::index', ['filter' => 'pegawaiFilter']);
+// transaksi
 $routes->get('pegawai/transaksi', 'Pegawai\Transaksi::data', ['filter' => 'pegawaiFilter']);
 $routes->get('pegawai/transaksi/data', 'Pegawai\Transaksi::data', ['filter' => 'pegawaiFilter']);
 $routes->post('pegawai/transaksi/data', 'Pegawai\Transaksi::data', ['filter' => 'pegawaiFilter']);
@@ -50,6 +60,19 @@ $routes->post('pegawai/transaksi/simpandata', 'Pegawai\Transaksi::simpandata', [
 $routes->get('pegawai/transaksi/edit/(:segment)', 'Pegawai\Transaksi::edit/$1', ['filter' => 'pegawaiFilter']);
 $routes->post('pegawai/transaksi/update/(:segment)', 'Pegawai\Transaksi::update/$1', ['filter' => 'pegawaiFilter']);
 $routes->get('pegawai/transaksi/getMenuById/(:segment)', 'Pegawai\Transaksi::getMenuById/$1', ['filter' => 'pegawaiFilter']);
+//menu
+$routes->get('pegawai/menu', 'Pegawai\Menu::data', ['filter' => 'pegawaiFilter']);
+$routes->get('pegawai/menu/data', 'Pegawai\Menu::data', ['filter' => 'pegawaiFilter']);
+$routes->post('pegawai/menu/data', 'Pegawai\Menu::data', ['filter' => 'pegawaiFilter']);
+$routes->get('pegawai/menu/formTambah', 'Pegawai\Menu::formTambah', ['filter' => 'pegawaiFilter']);
+$routes->post('pegawai/menu/simpandata', 'Pegawai\Menu::simpandata', ['filter' => 'pegawaiFilter']);
+$routes->get('pegawai/menu/edit/(:segment)', 'Pegawai\Menu::edit/$1', ['filter' => 'pegawaiFilter']);
+$routes->post('pegawai/menu/update/(:segment)', 'Pegawai\Menu::update/$1', ['filter' => 'pegawaiFilter']);
+$routes->delete('pegawai/menu/hapus/(:segment)', 'Pegawai\Menu::hapus/$1', ['filter' => 'pegawaiFilter']);
+// change password
+$routes->get('pegawai/users/', 'Pegawai\Users', ['filter' => 'pegawaiFilter']);
+$routes->post('pegawai/users/update/(:segment)', 'Pegawai\Users::update/$1', ['filter' => 'pegawaiFilter']);
+
 
 
 

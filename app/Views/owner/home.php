@@ -42,10 +42,10 @@
     </div>
 </div>
 <div class="row">
-    <div class="col-md-4">
+    <div class="col-md-6">
         <div class="card card-primary">
             <div class="card-header">
-                <h3 class="card-title">Transaction Chart</h3>
+                <h3 class="card-title">Grafik Transaksi</h3>
                 <div class="card-tools">
                     <button type="button" class="btn btn-tool" data-card-widget="collapse">
                         <i class="fas fa-minus"></i>
@@ -55,7 +55,7 @@
             <div class="card-body">
                 <canvas id="areaChart" class="chartjs-render-monitor" style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%; display: block; width: 441px;"></canvas>
                 <script>
-                     function getRandomColor() {
+                    function getRandomColor() {
                         var letters = '0123456789ABCDEF';
                         var color = '#';
                         for (var i = 0; i < 6; i++) {
@@ -91,16 +91,13 @@
 
         </div>
     </div>
-    <div class="col-md-4">
-        <div class="card card-success">
+    <div class="col-md-6">
+        <div class="card card-primary">
             <div class="card-header">
-                <h3 class="card-title">Branch Chart</h3>
+                <h3 class="card-title">Transaksi Per Cabang</h3>
                 <div class="card-tools">
                     <button type="button" class="btn btn-tool" data-card-widget="collapse">
                         <i class="fas fa-minus"></i>
-                    </button>
-                    <button type="button" class="btn btn-tool" data-card-widget="remove">
-                        <i class="fas fa-times"></i>
                     </button>
                 </div>
             </div>
@@ -143,10 +140,12 @@
 
         </div>
     </div>
-    <div class="col-md-4">
+</div>
+<div class="row">
+    <div class="col-md-6">
         <div class="card card-primary">
             <div class="card-header">
-                <h3 class="card-title">Menu Chart</h3>
+                <h3 class="card-title">Menu Terlaris</h3>
                 <div class="card-tools">
                     <button type="button" class="btn btn-tool" data-card-widget="collapse">
                         <i class="fas fa-minus"></i>
@@ -170,6 +169,7 @@
                         for (var i = 0; i < length; i++) {
                             colors.push(getRandomColor());
                         }
+
                         return colors;
                     }
 
@@ -179,12 +179,83 @@
                         data: {
                             labels: <?= json_encode(array_column($transaksiByMenu, 'nama_menu')); ?>,
                             datasets: [{
-                                label: 'Transaksi',
                                 data: <?= json_encode(array_column($transaksiByMenu, 'total_transaksi')); ?>,
                                 backgroundColor: generateRandomColors(<?= count($transaksiByMenu); ?>),
                                 borderColor: generateRandomColors(<?= count($transaksiByMenu); ?>),
                                 borderWidth: 1
                             }]
+                        }
+                    });
+                </script>
+            </div>
+
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card card-primary">
+            <div class="card-header">
+                <h3 class="card-title">Summary Keuangan Cabang</h3>
+                <div class="card-tools">
+                    <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                        <i class="fas fa-minus"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="card-body">
+                <canvas id="branch-report" class="chartjs-render-monitor" style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%; display: block; width: 441px;"></canvas>
+                <script>
+                    function getRandomColor() {
+                        var letters = '0123456789ABCDEF';
+                        var color = '#';
+                        for (var i = 0; i < 6; i++) {
+                            color += letters[Math.floor(Math.random() * 16)];
+                        }
+                        return color;
+                    }
+
+                    function generateRandomColors(length) {
+                        var colors = [];
+                        for (var i = 0; i < length; i++) {
+                            colors.push(getRandomColor());
+                        }
+                        return colors;
+                    }
+
+                    var ctx = document.getElementById('branch-report').getContext('2d');
+                    var transaksiByCabangChart = new Chart(ctx, {
+                        type: 'bar',
+                        data: {
+                            labels: <?= json_encode(array_column($laporanKeuangan, 'nama_cabang')); ?>,
+                            datasets: [
+                                {
+                                    label: 'Total Income',
+                                    data: <?= json_encode(array_column($laporanKeuangan, 'total_income')); ?>,
+                                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                                    borderColor: 'rgba(75, 192, 192, 1)',
+                                    borderWidth: 1
+                                },
+                                {
+                                    label: 'Total Outcome',
+                                    data: <?= json_encode(array_column($laporanKeuangan, 'total_outcome')); ?>,
+                                    backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                                    borderColor: 'rgba(255, 99, 132, 1)',
+                                    borderWidth: 1
+                                },
+                                {
+                                    label: 'Profit',
+                                    data: <?= json_encode(array_column($laporanKeuangan, 'profit')); ?>,
+                                    backgroundColor: "#470FF4",
+                                    borderColor: "#470FF4",
+                                    borderWidth: 1
+                                }
+                            ]
+                        },
+                        options: {
+                            scales: {
+                                y: {
+                                    beginAtZero: true
+                                }
+                            }
                         }
                     });
                 </script>

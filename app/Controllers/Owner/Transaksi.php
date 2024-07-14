@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Controllers\Pegawai;
+namespace App\Controllers\Owner;
 
 use App\Controllers\BaseController;
 use App\Models\Modelmenuminuman;
 use App\Models\CabangModel;
-use App\Models\TransaksiPegawai;
+use App\Models\TransaksiOwner;
 
 class Transaksi extends BaseController
 {
@@ -17,7 +17,7 @@ class Transaksi extends BaseController
   {
     $this->menuminuman = new Modelmenuminuman();
     $this->cabangmodel = new CabangModel();
-    $this->transaksimodel = new TransaksiPegawai();
+    $this->transaksimodel = new TransaksiOwner();
   }
 
   public function data()
@@ -26,7 +26,7 @@ class Transaksi extends BaseController
     if (isset($tombolCari)) {
       $cari = $this->request->getPost('caritransaksi');
       session()->set('caritransaksi', $cari);
-      return redirect()->to(base_url('pegawai/transaksi/data'));
+      return redirect()->to(base_url('owner/transaksi/data'));
     } else {
       $cari = session()->get('caritransaksi');
     }
@@ -41,7 +41,7 @@ class Transaksi extends BaseController
       'menu' => $menu,
       'cari' => $cari
     ];
-    return view('pegawai/transaksi/data', $data);
+    return view('owner/transaksi/data', $data);
   }
 
 
@@ -56,7 +56,7 @@ class Transaksi extends BaseController
         ->groupEnd()
         ->findAll();
       $msg = [
-        'data' => view('pegawai/transaksi/modalformtambah', ['cabang' => $cabang, 'menu' => $menu])
+        'data' => view('owner/transaksi/modalformtambah', ['cabang' => $cabang, 'menu' => $menu])
       ];
 
       echo json_encode($msg);
@@ -103,7 +103,7 @@ class Transaksi extends BaseController
       'validation' => \Config\Services::validation(),
     ];
 
-    return view('pegawai/transaksi/edit', $data);
+    return view('owner/transaksi/edit', $data);
   }
 
 
@@ -151,14 +151,14 @@ class Transaksi extends BaseController
         'menu' => $this->menuminuman->find($id_menu),
         'validation' => \Config\Services::validation()
       ];
-      echo view('pegawai/transaksi/edit', $data);
+      echo view('owner/transaksi/edit', $data);
     } else {
       $msg = $this->transaksimodel->updateTransaksi($id_trx, $type, $nominal, $quantity, $id_menu);
 
       echo json_encode($msg);
 
       session()->setFlashdata('berhasil', 'Data Transaksi Berhasil Diedit');
-      return redirect()->to(base_url('pegawai/transaksi/data'));
+      return redirect()->to(base_url('owner/transaksi/data'));
     }
   }
 

@@ -46,4 +46,18 @@ class HomeModel extends Model
       ->groupBy('id_menu')
       ->findAll();
   }
+  public function getLaporanKeuanganPerCabang()
+  {
+    return $this->select(
+      'cabang.nama_cabang,
+      SUM(CASE WHEN transaksi.type = "in" THEN transaksi.nominal ELSE 0 END) as total_income,
+      SUM(CASE WHEN transaksi.type = "out" THEN transaksi.nominal ELSE 0 END) as total_outcome,
+      SUM(CASE WHEN transaksi.type = "in" THEN transaksi.nominal ELSE 0 END) - 
+      SUM(CASE WHEN transaksi.type = "out" THEN transaksi.nominal ELSE 0 END) as profit'
+    )
+      ->join('menu', 'transaksi.id_menu = menu.id', 'left')
+      ->join('cabang', 'transaksi.id_cabang = cabang.id', 'left')
+      ->groupBy('cabang.nama_cabang')
+      ->findAll();
+  }
 }

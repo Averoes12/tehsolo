@@ -10,10 +10,18 @@
     </a>
 </li>
 <li class="nav-item has-treeview">
+    <a href="<?= site_url('owner/transaksi'); ?>" class="nav-link">
+        <i class="nav-icon fas fa-receipt"></i>
+        <p>
+            Transaksi
+        </p>
+    </a>
+</li>
+<li class="nav-item has-treeview">
     <a href="<?= site_url('owner/menu'); ?>" class="nav-link">
         <i class="nav-icon fas fa-utensils"></i>
         <p>
-            Daftar menu
+            Menu & Stok
         </p>
     </a>
 </li>
@@ -21,7 +29,7 @@
     <a href="<?= site_url('owner/cabang'); ?>" class="nav-link">
         <i class="nav-icon fas fa-building"></i>
         <p>
-            Daftar Cabang
+            Cabang
         </p>
     </a>
 </li>
@@ -29,7 +37,7 @@
     <a href="<?= site_url('owner/users'); ?>" class="nav-link">
         <i class="nav-icon fas fa-user"></i>
         <p>
-            Kelola user
+            Kelola User
         </p>
     </a>
 </li>

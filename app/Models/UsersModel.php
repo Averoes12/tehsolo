@@ -10,14 +10,13 @@ class UsersModel extends Model
     protected $primaryKey = 'id';
     protected $allowedFields = ['username', 'password', 'role'];
 
-    public function cariData($cari, $limit, $offset)
+    public function cariData($cari)
     {
         $builder = $this->table('users');
         $builder->select('users.id, users.username, users.role, cabang.nama_cabang');
         $builder->join('cabang', 'users.id_cabang = cabang.id');
         $builder->groupBy('users.id');
         $builder->like('username', $cari);
-        $builder->limit($limit, $offset);
         $query = $builder->get();
 
         return $query->getResultArray();
@@ -31,13 +30,12 @@ class UsersModel extends Model
             ->first();
     }
 
-    public function getAllData($limit, $offset)
+    public function getAllData()
     {
         $builder = $this->table('users');
         $builder->select('users.id, users.username, users.role, cabang.nama_cabang');
         $builder->join('cabang', 'users.id_cabang = cabang.id');
         $builder->groupBy('users.id');
-        $builder->limit($limit, $offset);
         $query = $builder->get();
 
         return $query->getResultArray();

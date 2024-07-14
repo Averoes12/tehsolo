@@ -4,7 +4,7 @@ namespace App\Models;
 
 use CodeIgniter\Model;
 
-class TransaksiPegawai extends Model
+class TransaksiOwner extends Model
 {
     protected $table      = 'transaksi';
     protected $primaryKey = 'id';
@@ -17,7 +17,6 @@ class TransaksiPegawai extends Model
         $builder->join('menu', 'transaksi.id_menu = menu.id', 'left');
         $builder->join('cabang', 'menu.id_cabang = cabang.id', 'left');
         $builder->join('users', 'transaksi.id_user = users.id', 'left');
-        $builder->where('transaksi.id_cabang', session('id_cabang'));
         $builder->like('menu.nama_menu', $cari);
         $query = $builder->get();
 
@@ -78,7 +77,6 @@ class TransaksiPegawai extends Model
         $builder->join('menu', 'transaksi.id_menu = menu.id', 'left');
         $builder->join('cabang', 'transaksi.id_cabang = cabang.id', 'left');
         $builder->join('users', 'transaksi.id_user = users.id', 'left');
-        $builder->where('transaksi.id_cabang', session('id_cabang'));
         $query = $builder->get();
 
         return $query->getResultArray();

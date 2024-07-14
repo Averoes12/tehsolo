@@ -19,4 +19,15 @@ class CabangModel extends Model
     {
         return $this->table('cabang')->get()->getResult();
     }
+
+    public function getCount()
+    {
+        $db = db_connect();
+        $builder = $db->table('users');
+        $builder->select('COUNT(*) as count');
+        $query = $builder->get();
+        $result = $query->getRowArray();
+
+        return $result['count'];
+    }
 }

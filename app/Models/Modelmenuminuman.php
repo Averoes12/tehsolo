@@ -11,14 +11,16 @@ class Modelmenuminuman extends Model
 
     protected $allowedFields = ['nama_menu', 'harga'];
 
-    public function cariData($cari, $limit, $offset)
+    public function cariData($cari)
     {
         $builder = $this->table('menu');
         $builder->select('menu.id, menu.nama_menu, menu.harga, menu.stok, cabang.nama_cabang');
         $builder->join('cabang', 'menu.id_cabang = cabang.id', 'left');
+        if(session('role_id') != "owner"){
+            $builder->where('cabang.id', session('id_cabang'));
+        }
         $builder->like('menu.nama_menu', $cari);
         $builder->groupBy('menu.id');
-        $builder->limit($limit, $offset);
         $query = $builder->get();
 
         return $query->getResultArray();
@@ -49,13 +51,15 @@ class Modelmenuminuman extends Model
         return $msg;
     }
 
-    public function getAllData($limit, $offset)
+    public function getAllData()
     {
         $builder = $this->table('menu');
         $builder->select('menu.id, menu.nama_menu, menu.harga, menu.stok, cabang.nama_cabang');
         $builder->join('cabang', 'menu.id_cabang = cabang.id', 'left');
+        if(session('role_id') != "owner"){
+            $builder->where('cabang.id', session('id_cabang'));
+        }
         $builder->groupBy('menu.id');
-        $builder->limit($limit, $offset);
         $query = $builder->get();
 
         return $query->getResultArray();

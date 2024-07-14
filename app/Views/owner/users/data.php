@@ -18,12 +18,6 @@
             </button>
         </h3>
 
-        <div class="card-tools">
-            <button type="button" class="btn btn-tool" data-card-widget="collapse" data-toggle="tooltip" title="Collapse">
-                <i class="fas fa-minus"></i></button>
-            <button type="button" class="btn btn-tool" data-card-widget="remove" data-toggle="tooltip" title="Remove">
-                <i class="fas fa-times"></i></button>
-        </div>
     </div>
     <div class="card-body">
         <form method="POST" action="<?= base_url('owner/users/data') ?>">
@@ -46,7 +40,8 @@
             </thead>
 
             <tbody>
-                <?php $nomor = 1 + (($nohalaman - 1) * 5);
+                <?php 
+                $nomor = 1;
                 if(count($datausers) > 0){
                 foreach ($datausers as $row) :
                 ?>
@@ -71,7 +66,6 @@
         </table>
 
         <div class="float-center">
-            <?= $pager->links('owner/users', 'paging_data') ?>
         </div>
         <!-- /.card-footer-->
     </div>

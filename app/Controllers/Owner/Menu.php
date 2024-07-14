@@ -28,21 +28,12 @@ class Menu extends BaseController
             $cari = session()->get('carimenu');
         }
 
-        $noHalaman = $this->request->getVar('page_menuminuman') ? $this->request->getVar('page_menuminuman') : 1;
-        $limit = 5; // Jumlah data per halaman
-        $offset = ($noHalaman - 1) * $limit;
-        $totalRows = $this->menuminuman->getCount();
-
-        $dataMenu = $cari ? $this->menuminuman->cariData($cari, $limit, $offset) : $this->menuminuman->getAllData($limit, $offset);
+        $dataMenu = $cari ? $this->menuminuman->cariData($cari) : $this->menuminuman->getAllData();
         $cabang = $this->cabangmodel->findAll();
-        $pager = \Config\Services::pager();
-        $pager->makeLinks($noHalaman, $limit, $totalRows, 'default_full', 3);
 
         $data = [
             'datamenu' => $dataMenu,
             'cabang' => $cabang,
-            'pager' => $pager,
-            'nohalaman' => $noHalaman,
             'cari' => $cari
         ];
         return view('owner/menu/data', $data);

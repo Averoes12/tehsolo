@@ -28,20 +28,15 @@ class Users extends BaseController
             $cari = session()->get('cariusers');
         }
 
-        $noHalaman = $this->request->getVar('page_users') ? $this->request->getVar('page_users') : 1;
-        $limit = 5; // Jumlah data per halaman
-        $offset = ($noHalaman - 1) * $limit;
-        $totalRows = $this->usersmodel->getCount();
-
-        $dataUsers = $cari ? $this->usersmodel->cariData($cari, $limit, $offset) : $this->usersmodel->getAllData($limit, $offset);
-        $cabang = $this->cabangmodel->findAll();
-        $pager = \Config\Services::pager();
-        $pager->makeLinks($noHalaman, $limit, $totalRows, 'default_full', 3);
+        
+        $dataUsers = $cari ? $this->usersmodel->cariData($cari) : $this->usersmodel->getAllData();
+        $cabang = $this->cabangmodel
+            ->join('users', 'users.id_cabang = cabang.id', 'left')
+            ->where('users.id_cabang', null)
+            ->findAll();
 
         $data = [
             'datausers' => $dataUsers,
-            'pager' => $pager,
-            'nohalaman' => $noHalaman,
             'cabang' => $cabang,
             'cari' => $cari,
         ];

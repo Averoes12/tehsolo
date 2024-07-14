@@ -1,4 +1,4 @@
-<?= $this->extend('pegawai/nav') ?>
+<?= $this->extend('owner/nav') ?>
 
 <?= $this->section('judul') ?>
 <h3>Daftar Transaksi</h3>
@@ -21,7 +21,7 @@
     </div>
     <div class="card-body">
 
-        <form method="POST" action="<?= base_url('pegawai/transaksi/data') ?>">
+        <form method="POST" action="<?= base_url('owner/transaksi/data') ?>">
             <?= csrf_field(); ?>
             <div class="input-group mb-3">
                 <input type="text" class="form-control" placeholder="Cari Nama Menu" name="caritransaksi" autofocus value="<?= $cari; ?>">
@@ -46,28 +46,29 @@
             </thead>
 
             <tbody>
-                <?php 
+                <?php
                 $nomor = 1;
-                if(count($datatrx) > 0) {
-                foreach ($datatrx as $row) :
-                    $data = base64_encode($row['id']."*".$row['id_menu']);
+                if (count($datatrx) > 0) {
+                    foreach ($datatrx as $row) :
+                        $data = base64_encode($row['id'] . "*" . $row['id_menu']);
                 ?>
-                    <tr>
-                        <td ><?= $nomor++; ?></td>
-                        <td><?= $row['trx_date']; ?></td>
-                        <td><?= $row['nama_menu']; ?></td>
-                        <td><?= ($row['nama_cabang'] == null || $row['nama_cabang'] == 0) ? "All" : $row['nama_cabang'] ?></td>
-                        <td align="right"><?= number_format($row['nominal']) ?></td>
-                        <td align="right"><?= number_format($row['quantity']) ?></td>
-                        <td><?= $row['createby'] ?></td>
-                        <td><span class="badge <?= $row['type'] == "in" ? 'bg-success' : 'bg-danger' ?>"><?= $row['type'] == "in" ? 'Pemasukan' : 'Pengeluaran' ?></span></td>
-                        <td align="right">
-                            <a href="<?= base_url('pegawai/transaksi/edit/' . $data) ?>" class="btn btn-primary btn-sm"> <i class="fas fa-edit"></i></a>
-                        </td>
-                    </tr>
-                <?php endforeach; } else { ?>
-                  <td colspan="8" align="center">Nothing data found</td>
-                  <?php } ?>
+                        <tr>
+                            <td><?= $nomor++; ?></td>
+                            <td><?= $row['trx_date']; ?></td>
+                            <td><?= $row['nama_menu']; ?></td>
+                            <td><?= ($row['nama_cabang'] == null || $row['nama_cabang'] == 0) ? "All" : $row['nama_cabang'] ?></td>
+                            <td align="right"><?= number_format($row['nominal']) ?></td>
+                            <td align="right"><?= number_format($row['quantity']) ?></td>
+                            <td><?= $row['createby'] ?></td>
+                            <td><span class="badge <?= $row['type'] == "in" ? 'bg-success' : 'bg-danger' ?>"><?= $row['type'] == "in" ? 'Pemasukan' : 'Pengeluaran' ?></span></td>
+                            <td align="right">
+                                <a href="<?= base_url('owner/transaksi/edit/' . $data) ?>" class="btn btn-primary btn-sm"> <i class="fas fa-edit"></i></a>
+                            </td>
+                        </tr>
+                    <?php endforeach;
+                } else { ?>
+                    <td colspan="8" align="center">Nothing data found</td>
+                <?php } ?>
             </tbody>
         </table>
 
@@ -90,7 +91,7 @@
                 if (willDelete) {
                     $.ajax({
                         type: "delete",
-                        url: "<?= site_url('pegawai/transaksi/hapus/') ?>" + kode,
+                        url: "<?= site_url('owner/transaksi/hapus/') ?>" + kode,
                         dataType: "json",
                         success: function(response) {
                             if (response.sukses) {
@@ -120,7 +121,7 @@
             e.preventDefault();
 
             $.ajax({
-                url: "<?= site_url('pegawai/transaksi/formTambah') ?>",
+                url: "<?= site_url('owner/transaksi/formTambah') ?>",
                 dataType: "json",
                 success: function(response) {
                     if (response.data) {

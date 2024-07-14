@@ -1,26 +1,31 @@
-<div class="modal fade" id="modaltambahcabang" tabindex="-1" role="dialog" aria-labelledby="modaltambahcabang" aria-hidden="true">
+<div class="modal fade" id="modaltambahmenu" tabindex="-1" role="dialog" aria-labelledby="modaltambahmenu" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="modaltambahcabang">Tambah cabang</h5>
+                <h5 class="modal-title" id="modaltambahmenu">Tambah menu</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <?= form_open('owner/cabang/simpandata', ['class' => 'formsimpan']) ?>
+            <?= form_open('pegawai/menu/simpandata', ['class' => 'formsimpan']) ?>
             <div class="modal-body">
-                
                 <div class="form-group">
-                    <label for="">Nama cabang</label>
-                    <input type="text" name="namacabang" id="namacabang" class="form-control form-control-sm" required>
+                    <label for="">Nama Menu</label>
+                    <input type="text" name="namamenu" id="namamenu" class="form-control form-control-sm" required>
                 </div>
                 <div class="form-group">
-                    <label for="">Alamat</label>
-                    <input type="text" name="alamatcabang" id="alamatcabang" class="form-control form-control-sm" required>
+                    <label for="">Harga</label>
+                    <input type="number" name="hargamenu" id="hargamenu" class="form-control form-control-sm" min="1" required>
                 </div>
                 <div class="form-group">
-                    <label for="">Telepon</label>
-                    <input type="text" name="teleponcabang" id="teleponcabang" class="form-control form-control-sm" required>
+                    <label for="">Stok</label>
+                    <input type="number" name="stok" id="stok" class="form-control form-control-sm" min="0" required>
+                </div>
+                <div class="form-group">
+                    <label for="">Cabang</label>
+                    <select name="cabang" id="cabang" class="form-control select2">
+                        <option value="<?= $cabang['id'] ?>"><?= $cabang['nama_cabang'] ?></option>
+                    </select>
                 </div>
             </div>
             <div class="modal-footer">

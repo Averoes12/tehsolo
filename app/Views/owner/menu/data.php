@@ -17,12 +17,7 @@
             </button>
         </h3>
 
-        <div class="card-tools">
-            <button type="button" class="btn btn-tool" data-card-widget="collapse" data-toggle="tooltip" title="Collapse">
-                <i class="fas fa-minus"></i></button>
-            <button type="button" class="btn btn-tool" data-card-widget="remove" data-toggle="tooltip" title="Remove">
-                <i class="fas fa-times"></i></button>
-        </div>
+        
     </div>
     <div class="card-body">
 
@@ -48,7 +43,8 @@
             </thead>
 
             <tbody>
-                <?php $nomor = 1 + (($nohalaman - 1) * 5);
+                <?php
+                $nomor = 1;
                 if (count($datamenu) > 0) {
                     foreach ($datamenu as $row) :
                 ?>
@@ -73,14 +69,12 @@
         </table>
 
         <div class="float-center">
-            <?= $pager->links('owner/menu', 'paging_data'); ?>
         </div>
         <!-- /.card-footer-->
     </div>
 </div>
 <div class="viewmodal" style="display: none;"></div>
 <script>
-
     function hapus(kode) {
         swal({
                 title: "Hapus Data Menu",
