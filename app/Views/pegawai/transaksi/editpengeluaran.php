@@ -17,24 +17,9 @@
       <div class="card-body">
         <div class="form-group">
           <label for="type">Type</label>
-          <input type="hidden" name="type" value="in">
+          <input type="hidden" name="type" value="out">
         </div>
-        <div class="form-group" id="menu-group">
-          <label>Nama Menu</label>
-          <select name="menu" id="menu" class="form-control select2 <?= ($validation->hasError('nama_menu')) ? 'is-invalid' : '' ?>">
-            <?php foreach ($menus as $e) : ?>
-              <option value="<?= $e['id'] ?>" <?= $e['id'] == $trx['id_menu'] ? 'selected' : '' ?>>
-                <?= $e['nama_menu'] ?>
-              </option>
-            <?php endforeach; ?>
-          </select>
-          <?php if ($validation->hasError('nama_menu')) : ?>
-            <div class="invalid-feedback">
-              <?= $validation->getError('nama_menu') ?>
-            </div>
-          <?php endif; ?>
-        </div>
-        <div class="form-group" id="barang-group" style="display:none;">
+        <div class="form-group" id="barang-group">
           <label for="barang">Barang</label>
           <input type="text" name="barang" id="barang" class="form-control <?= ($validation->hasError('barang')) ? 'is-invalid' : '' ?>" value="<?= $trx['barang'] ?>">
           <?php if ($validation->hasError('barang')) : ?>
@@ -45,20 +30,10 @@
         </div>
         <div class="form-group">
           <label>Harga</label>
-          <input type="text" id="harga" class="form-control <?= ($validation->hasError('harga')) ? 'is-invalid' : '' ?>" name="harga" pattern="[0-9]*" inputmode="numeric" value="<?= $menu['harga'] ?>" <?= $trx['type'] == 'in' ? 'readonly' : '' ?>>
+          <input type="text" id="harga" class="form-control <?= ($validation->hasError('harga')) ? 'is-invalid' : '' ?>" name="harga" pattern="[0-9]*" inputmode="numeric" value="<?= ($trx['nominal'] / $trx['quantity']) ?>" <?= $trx['type'] == 'in' ? 'readonly' : '' ?>>
           <?php if ($validation->hasError('harga')) : ?>
             <div class="invalid-feedback">
               <?= $validation->getError('harga') ?>
-            </div>
-          <?php endif; ?>
-        </div>
-        <div class="form-group" id="stok-group">
-          <label>Stok</label>
-          <input type="text" id="stok" class="form-control <?= ($validation->hasError('stok')) ? 'is-invalid' : '' ?>" name="stok" pattern="[0-9]*" inputmode="numeric" value="<?= $menu['stok'] ?>" readonly>
-          <p id="info-stok" class="text-danger" style="text-align: right"></p>
-          <?php if ($validation->hasError('stok')) : ?>
-            <div class="invalid-feedback">
-              <?= $validation->getError('stok') ?>
             </div>
           <?php endif; ?>
         </div>
@@ -105,72 +80,7 @@
 
 <script>
   $(document).ready(function() {
-    // Initialize fields based on current type
-    function updateFieldsBasedOnType(type) {
-
-      // Show/hide fields based on type
-      if (type === "out") {
-        $("#menu-group").hide();
-        $("#barang-group").show();
-        $("#harga").prop("readonly", false);
-        $("#stok-group").hide();
-      } else {
-        $("#menu-group").show();
-        $("#barang-group").hide();
-        $("#harga").prop("readonly", true);
-        $("#stok-group").show();
-      }
-    }
-
-    // Handle type change
-    $("#type").change(function() {
-      var type = $(this).val();
-      updateFieldsBasedOnType(type);
-    });
-
-    // Initialize fields based on current type
-    var currentType = $("#type").val();
-    updateFieldsBasedOnType(currentType);
-
-    // Handle menu change
-    $("#menu").change(function() {
-      var menuId = $(this).val();
-      var quantity = $("#qty").val();
-      var type = $("#type").val();
-
-      $.ajax({
-        url: "<?= site_url('pegawai/transaksi/getMenuById/') ?>" + menuId,
-        method: "GET",
-        dataType: "json",
-        success: function(data) {
-          if (data.menu) {
-            $("#harga").val(data.menu.harga);
-            $("#stok").val(data.menu.stok);
-
-            if (quantity != "") {
-              var totalPrice = data.menu.harga * parseInt(quantity);
-              $("#nominal").val(totalPrice);
-            }
-
-            if (type != "out") {
-              if (data.menu.stok == 0) {
-                $("#info-stok").html("Stok Habis");
-                $(".tombolSimpan").prop("disabled", true);
-              } else {
-                $("#info-stok").html("");
-                $(".tombolSimpan").prop("disabled", false);
-              }
-            }
-          } else {
-            alert("Menu tidak ditemukan");
-          }
-        },
-        error: function(e) {
-          alert("Terjadi kesalahan saat mengambil data menu");
-        }
-      });
-    });
-
+    
     function validateInput(input) {
       var value = input.val();
       var sanitizedValue = value.replace(/[^0-9]/g, '');

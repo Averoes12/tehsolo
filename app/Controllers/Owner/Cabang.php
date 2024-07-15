@@ -26,12 +26,12 @@ class Cabang extends BaseController
             $cari = session()->get('caricabang');
         }
 
-        $dataCabang = $cari ? $this->cabangmodel->cariData($cari) : $this->cabangmodel;
+        $dataCabang = $cari ? $this->cabangmodel->cariData($cari) : $this->cabangmodel->getAll();
         $totalRows = $this->cabangmodel->getCount();
 
 
         $data = [
-            'datacabang' => $dataCabang->paginate($totalRows, 'cabangmodel'),
+            'datacabang' => $dataCabang,
             'cari' => $cari
         ];
         return view('owner/cabang/data', $data);

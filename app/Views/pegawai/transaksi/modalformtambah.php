@@ -9,13 +9,7 @@
       </div>
       <?= form_open('pegawai/transaksi/simpandata', ['class' => 'formsimpan']) ?>
       <div class="modal-body">
-        <div class="form-group">
-          <label for="type">Type</label>
-          <select name="type" id="type" class="form-control select2">
-            <option value="in">In</option>
-            <option value="out">Out</option>
-          </select>
-        </div>
+        <input type="hidden" name="type" value="in">
         <div class="form-group">
           <label for="menu">Menu</label>
           <select name="menu" id="menu" class="form-control select2 form-control-sm" required>
@@ -33,11 +27,10 @@
           <label for="">Stok</label>
           <input type="number" name="stok" id="stok" class="form-control form-control-sm" readonly style="text-align: right;">
           <p id="info-stok" class="text-danger" style="text-align: right"></p>
-
         </div>
         <div class="form-group">
           <label for="">Quantity</label>
-          <input type="number" name="qty" id="qty" class="form-control form-control-sm" min="1" required style="text-align: right;">
+          <input type="text" name="qty" id="qty" class="form-control form-control-sm" pattern="[0-9]*" inputmode="numeric" min="1" required style="text-align: right;">
         </div>
         <div class="form-group">
           <label for="">Nominal</label>
@@ -72,16 +65,16 @@
         success: function(response) {
           if (response.sukses) {
             Swal.fire({
-              title: "berhasil",
+              title: "Berhasil",
               text: response.sukses,
               icon: "success"
             }).then((result) => {
               if (result.isConfirmed) {
+                console.log("masuk sini");
                 window.location.reload();
               }
               window.location.reload();
             });
-
           }
         },
         error: function(xhr, ajaxOptions, thrownError) {
@@ -94,50 +87,62 @@
       var menuId = $(this).val();
       var type = $("#type").val();
 
-      $.ajax({
-        url: "<?= site_url('pegawai/transaksi/getMenuById/') ?>" + menuId,
-        method: "GET",
-        dataType: "json",
-        success: function(data) {
-          if (data.menu) {
-            $("#harga").val(data.menu.harga);
-            $("#stok").val(data.menu.stok);
+      if (menuId != "") {
 
-            var quantity = $("#qty").val();
-            if (quantity != "") {
-              var totalPrice = data.menu.harga * quantity;
-              $("#nominal").val(totalPrice);
-            }
+        $.ajax({
+          url: "<?= site_url('pegawai/transaksi/getMenuById/') ?>" + menuId,
+          method: "GET",
+          dataType: "json",
+          success: function(data) {
+            if (data.menu) {
+              $("#harga").val(data.menu.harga);
+              $("#stok").val(data.menu.stok);
 
-            if (type != "out") {
-
-              if (data.menu.stok == 0) {
-                $("#info-stok").html("Stok Habis");
-                $(".tombolSimpan").prop("disabled", true);
-              } else {
-
-                $("#info-stok").html("");
-                $(".tombolSimpan").prop("disabled", false);
+              var quantity = $("#qty").val();
+              if (quantity != "") {
+                var totalPrice = data.menu.harga * quantity;
+                $("#nominal").val(totalPrice);
               }
-            }
 
-          } else {
-            alert("Menu tidak ditemukan");
+              if (type != "out") {
+                if (data.menu.stok == 0) {
+                  $("#info-stok").html("Stok Habis");
+                  $(".tombolSimpan").prop("disabled", true);
+                } else {
+                  $("#info-stok").html("");
+                  $(".tombolSimpan").prop("disabled", false);
+                }
+              }
+
+            } else {
+              alert("Menu tidak ditemukan");
+            }
+          },
+          error: function(e) {
+            alert("Terjadi kesalahan saat mengambil data menu");
           }
-        },
-        error: function(e) {
-          alert("Terjadi kesalahan saat mengambil data menu");
-        }
-      });
+        });
+      }
     });
 
-    $("#qty").on("input", function() {
+    function validateInput(input) {
+      var value = input.val();
+        var sanitizedValue = value.replace(/[^0-9]/g, '');
+
+        if (value !== sanitizedValue) {
+            input.val(sanitizedValue);
+        }
+    }
+
+    $("#qty, #harga, #stok").on("input keyup", function() {
+      validateInput($(this));
+
       var harga = $("#harga").val();
       var stok = $("#stok").val();
-      var quantity = $(this).val();
+      var quantity = $("#qty").val();
       var type = $("#type").val();
 
-      if (harga != "") {
+      if (harga != "" && quantity != "") {
         var totalPrice = harga * quantity;
         $("#nominal").val(totalPrice);
       }
@@ -149,13 +154,11 @@
         } else if (parseInt(quantity) > parseInt(stok)) {
           $("#info-stok").html("Stok tidak mencukupi");
           $(".tombolSimpan").prop("disabled", true);
-
         } else {
           $("#info-stok").html("");
           $(".tombolSimpan").prop("disabled", false);
         }
       }
-
     });
   });
 </script>

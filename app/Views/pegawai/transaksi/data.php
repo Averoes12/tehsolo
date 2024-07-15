@@ -13,7 +13,10 @@
     <div class="card-header">
         <h3 class="card-title">
             <button type="button" class="btn btn-sm btn-primary tombolTambah">
-                <i class="fa fa-plus"></i> Tambah Data
+                <i class="fa fa-plus"></i> Tambah Transaksi
+            </button>
+            <button type="button" class="btn btn-sm btn-outline-danger tombolPengeluaran">
+                <i class="fa fa-plus"></i> Catat Pengeluaran
             </button>
         </h3>
 
@@ -35,7 +38,7 @@
                 <tr>
                     <th>No</th>
                     <th>Tanggal Transaksi</th>
-                    <th>Nama Menu</th>
+                    <th>Nama Menu/Barang</th>
                     <th>Cabang</th>
                     <th>Nominal</th>
                     <th>Quantity</th>
@@ -55,14 +58,14 @@
                     <tr>
                         <td ><?= $nomor++; ?></td>
                         <td><?= $row['trx_date']; ?></td>
-                        <td><?= $row['nama_menu']; ?></td>
+                        <td><?= ($row['nama_menu'] != null) ? $row['nama_menu'] : $row['barang']; ?></td>
                         <td><?= ($row['nama_cabang'] == null || $row['nama_cabang'] == 0) ? "All" : $row['nama_cabang'] ?></td>
                         <td align="right"><?= number_format($row['nominal']) ?></td>
                         <td align="right"><?= number_format($row['quantity']) ?></td>
                         <td><?= $row['createby'] ?></td>
                         <td><span class="badge <?= $row['type'] == "in" ? 'bg-success' : 'bg-danger' ?>"><?= $row['type'] == "in" ? 'Pemasukan' : 'Pengeluaran' ?></span></td>
                         <td align="right">
-                            <a href="<?= base_url('pegawai/transaksi/edit/' . $data) ?>" class="btn btn-primary btn-sm"> <i class="fas fa-edit"></i></a>
+                            <a href="<?= $row['type'] == "in" ?  base_url('pegawai/transaksi/edit/' . $data) : base_url('pegawai/transaksi/editPengeluaran/' . $data) ?>" class="btn btn-primary btn-sm"> <i class="fas fa-edit"></i></a>
                         </td>
                     </tr>
                 <?php endforeach; } else { ?>
@@ -130,6 +133,28 @@
 
                         });
                         $('#modaltambahtrx').modal('show');
+                    }
+                },
+                error: function(xhr, ajaxOptions, thrownError) {
+                    alert(xhr.status + "\n" + xhr.responseText + "\n" + thrownError);
+                }
+            });
+        });
+
+        $('.tombolPengeluaran').click(function(e) {
+            e.preventDefault();
+
+            $.ajax({
+                url: "<?= site_url('pegawai/transaksi/formPengeluaran') ?>",
+                dataType: "json",
+                success: function(response) {
+                    if (response.data) {
+                        $('.viewmodal').html(response.data).show();
+                        $('#modalTypeOut').on('show.bs.modal', function(e) {
+                            $('#type').focus();
+
+                        });
+                        $('#modalTypeOut').modal('show');
                     }
                 },
                 error: function(xhr, ajaxOptions, thrownError) {

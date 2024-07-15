@@ -12,12 +12,19 @@ class CabangModel extends Model
 
     public function cariData($cari)
     {
-        return $this->table('cabang')->like('nama_cabang', $cari);
+        return $this->table($this->table)
+                    ->like('nama_cabang', $cari)
+                    ->orderBy('id', 'DESC')
+                    ->get()
+                    ->getResultArray();
     }
 
     public function getAll()
     {
-        return $this->table('cabang')->get()->getResult();
+        return $this->table($this->table)
+                    ->orderBy('id', 'DESC')
+                    ->get()
+                    ->getResultArray();
     }
 
     public function getCount()

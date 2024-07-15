@@ -17,6 +17,7 @@ class UsersModel extends Model
         $builder->join('cabang', 'users.id_cabang = cabang.id');
         $builder->groupBy('users.id');
         $builder->like('username', $cari);
+        $builder->orderBy('users.id', 'DESC');
         $query = $builder->get();
 
         return $query->getResultArray();
@@ -36,6 +37,7 @@ class UsersModel extends Model
         $builder->select('users.id, users.username, users.role, cabang.nama_cabang');
         $builder->join('cabang', 'users.id_cabang = cabang.id');
         $builder->groupBy('users.id');
+        $builder->orderBy('users.id', 'DESC');
         $query = $builder->get();
 
         return $query->getResultArray();

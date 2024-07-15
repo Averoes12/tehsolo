@@ -65,6 +65,19 @@ class Transaksi extends BaseController
     }
   }
 
+  function formPengeluaran()
+  {
+    if ($this->request->isAJAX()) {
+      $msg = [
+        'data' => view('pegawai/transaksi/modalformpengeluaran')
+      ];
+
+      echo json_encode($msg);
+    } else {
+      exit('Maaf tidak ada halaman yang bisa ditampilkan');
+    }
+  }
+
   function simpandata()
   {
     if ($this->request->isAJAX()) {
@@ -72,9 +85,9 @@ class Transaksi extends BaseController
       $nominal = $this->request->getVar('nominal');
       $quantity = $this->request->getVar('qty');
       $id_menu = $this->request->getVar('menu');
+      $barang = $this->request->getVar('barang');
 
-
-      $msg = $this->transaksimodel->addTransaksi($type, $nominal, $quantity, $id_menu, session('id_cabang'));
+      $msg = $this->transaksimodel->addTransaksi($type, $nominal, $quantity, $id_menu, $barang);
 
 
       echo json_encode($msg);
@@ -106,6 +119,21 @@ class Transaksi extends BaseController
     return view('pegawai/transaksi/edit', $data);
   }
 
+  function editPengeluaran($data)
+  {
+
+    $decode = base64_decode($data);
+    $id_trx = explode('*', $decode)[0];
+    $id_menu = explode('*', $decode)[1];
+
+    $data = [
+      'title' => 'Edit Transaksi',
+      'trx' =>  $this->transaksimodel->find($id_trx),
+      'validation' => \Config\Services::validation(),
+    ];
+
+    return view('pegawai/transaksi/editpengeluaran', $data);
+  }
 
   function update($id_trx)
   {
@@ -114,30 +142,59 @@ class Transaksi extends BaseController
     $nominal = $this->request->getVar('nominal');
     $quantity = $this->request->getVar('qty');
     $id_menu = $this->request->getVar('menu');
+    $barang = $this->request->getVar('barang');
 
-    $rules = [
-      'harga' => [
-        'rules' => 'required|numeric',
-        'errors' => [
-          'required' => 'Harga wajib diisi',
-          'numeric' => 'Harga harus berupa angka'
-        ]
-      ],
-      'qty' => [
-        'rules' => 'required|numeric',
-        'errors' => [
-          'required' => 'Quantity wajib diisi',
-          'numeric' => 'Quantity harus berupa angka'
-        ]
-      ],
-      'nominal' => [
-        'rules' => 'required|numeric',
-        'errors' => [
-          'required' => 'Nominal wajib diisi',
-          'numeric' => 'Nominal harus berupa angka'
-        ]
-      ],
-    ];
+    $rules = [];
+    if ($type == "out") {
+      $rules = [
+        'barang' => [
+          'rules' => 'required',
+          'errors' => [
+            'required' => 'Barang wajib diisi',
+          ]
+        ],
+        'harga' => [
+          'rules' => 'required',
+          'errors' => [
+            'required' => 'Harga wajib diisi',
+          ]
+        ],
+        'qty' => [
+          'rules' => 'required',
+          'errors' => [
+            'required' => 'Quantity wajib diisi',
+          ]
+        ],
+        'nominal' => [
+          'rules' => 'required',
+          'errors' => [
+            'required' => 'Nominal wajib diisi',
+          ]
+        ],
+      ];
+    } else {
+
+      $rules = [
+        'harga' => [
+          'rules' => 'required',
+          'errors' => [
+            'required' => 'Harga wajib diisi',
+          ]
+        ],
+        'qty' => [
+          'rules' => 'required',
+          'errors' => [
+            'required' => 'Quantity wajib diisi',
+          ]
+        ],
+        'nominal' => [
+          'rules' => 'required',
+          'errors' => [
+            'required' => 'Nominal wajib diisi',
+          ]
+        ],
+      ];
+    }
 
     if (!$this->validate($rules)) {
       $data = [
@@ -151,9 +208,14 @@ class Transaksi extends BaseController
         'menu' => $this->menuminuman->find($id_menu),
         'validation' => \Config\Services::validation()
       ];
-      echo view('pegawai/transaksi/edit', $data);
+
+      if ($type == "in") {
+        echo view('pegawai/transaksi/edit', $data);
+      } else {
+        echo view('pegawai/transaksi/editpengeluaran', $data);
+      }
     } else {
-      $msg = $this->transaksimodel->updateTransaksi($id_trx, $type, $nominal, $quantity, $id_menu);
+      $msg = $this->transaksimodel->updateTransaksi($id_trx, $type, $nominal, $quantity, $id_menu, $barang);
 
       echo json_encode($msg);
 

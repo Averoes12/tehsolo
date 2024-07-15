@@ -80,8 +80,8 @@
                             datasets: [{
                                 label: 'Transaksi',
                                 data: <?= json_encode(array_column($transaksiByTanggal, 'total_transaksi')); ?>,
-                                backgroundColor: generateRandomColors(<?= count($transaksiByMenu); ?>),
-                                borderColor: generateRandomColors(<?= count($transaksiByMenu); ?>),
+                                backgroundColor: generateRandomColors(<?= count($transaksiByTanggal); ?>),
+                                borderColor: generateRandomColors(<?= count($transaksiByTanggal); ?>),
                                 borderWidth: 1
                             }]
                         }
@@ -129,8 +129,8 @@
                             datasets: [{
                                 label: 'Transaksi',
                                 data: <?= json_encode(array_column($transaksiByCabang, 'total_transaksi')); ?>,
-                                backgroundColor: generateRandomColors(<?= count($transaksiByMenu); ?>),
-                                borderColor: generateRandomColors(<?= count($transaksiByMenu); ?>),
+                                backgroundColor: generateRandomColors(<?= count($transaksiByCabang); ?>),
+                                borderColor: generateRandomColors(<?= count($transaksiByCabang); ?>),
                                 borderWidth: 1
                             }]
                         }

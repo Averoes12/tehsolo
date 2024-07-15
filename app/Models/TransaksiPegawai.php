@@ -13,18 +13,20 @@ class TransaksiPegawai extends Model
     public function cariData($cari)
     {
         $builder = $this->table('transaksi');
-        $builder->select('transaksi.id, transaksi.type, transaksi.trx_date, transaksi.id_user, transaksi.id_menu, transaksi.nominal, transaksi.quantity, transaksi.createby, menu.nama_menu, cabang.nama_cabang');
+        $builder->select('transaksi.id, transaksi.type, transaksi.trx_date, transaksi.id_user, transaksi.barang, transaksi.id_menu, transaksi.nominal, transaksi.quantity, users.username as createby, menu.nama_menu, cabang.nama_cabang');
         $builder->join('menu', 'transaksi.id_menu = menu.id', 'left');
         $builder->join('cabang', 'menu.id_cabang = cabang.id', 'left');
         $builder->join('users', 'transaksi.id_user = users.id', 'left');
         $builder->where('transaksi.id_cabang', session('id_cabang'));
         $builder->like('menu.nama_menu', $cari);
+        $builder->orLike('transaksi.barang', $cari);
+        $builder->orderBy('transaksi.trx_date', 'DESC');
         $query = $builder->get();
 
         return $query->getResultArray();
     }
 
-    public function addTransaksi($type, $nominal, $quantity, $id_menu, $id_user)
+    public function addTransaksi($type, $nominal, $quantity, $id_menu, $barang)
     {
         $db = db_connect();
         $db->transStart();
@@ -36,6 +38,7 @@ class TransaksiPegawai extends Model
             'nominal' => floatval($nominal),
             'quantity' => intval($quantity),
             'id_menu' => intval($id_menu),
+            'barang' => $barang,
             'id_user' => session('id_user'),
             'id_cabang' => session('id_cabang'),
             'createby' => session('id_user'),
@@ -48,12 +51,10 @@ class TransaksiPegawai extends Model
 
             if ($type === 'in') {
                 $menuBuilder->set('stok', 'stok - ' . intval($quantity), false);
-            } elseif ($type === 'out') {
-                $menuBuilder->set('stok', 'stok + ' . intval($quantity), false);
+                $menuBuilder->where('id', intval($id_menu));
+                $menuBuilder->update();
             }
 
-            $menuBuilder->where('id', intval($id_menu));
-            $menuBuilder->update();
         }
 
         if ($db->transComplete()) {
@@ -74,11 +75,12 @@ class TransaksiPegawai extends Model
     public function getAllData()
     {
         $builder = $this->table('transaksi');
-        $builder->select('transaksi.id, transaksi.type, transaksi.trx_date, transaksi.id_user, transaksi.id_menu, transaksi.nominal, transaksi.quantity, users.username as createby, menu.nama_menu, cabang.nama_cabang');
+        $builder->select('transaksi.id, transaksi.type, transaksi.trx_date, transaksi.id_user, transaksi.barang, transaksi.id_menu, transaksi.nominal, transaksi.quantity, users.username as createby, menu.nama_menu, cabang.nama_cabang');
         $builder->join('menu', 'transaksi.id_menu = menu.id', 'left');
         $builder->join('cabang', 'transaksi.id_cabang = cabang.id', 'left');
         $builder->join('users', 'transaksi.id_user = users.id', 'left');
         $builder->where('transaksi.id_cabang', session('id_cabang'));
+        $builder->orderBy('transaksi.trx_date', 'DESC');
         $query = $builder->get();
 
         return $query->getResultArray();
@@ -95,7 +97,7 @@ class TransaksiPegawai extends Model
         return $result['count'];
     }
 
-    public function updateTransaksi($trx_id, $type, $nominal, $quantity, $id_menu)
+    public function updateTransaksi($trx_id, $type, $nominal, $quantity, $id_menu, $barang)
     {
         $db = db_connect();
         $db->transStart();
@@ -107,10 +109,10 @@ class TransaksiPegawai extends Model
         if ($oldTransaction) {
             // Update transaksi
             $data = [
-                'type' => $type,
                 'nominal' => floatval($nominal),
                 'quantity' => intval($quantity),
                 'id_menu' => intval($id_menu),
+                'barang' => $barang,
                 'id_user' => session('id_user'),
                 'id_cabang' => session('id_cabang'),
                 'trx_date' => date('Y-m-d H:i:s'),
@@ -125,20 +127,16 @@ class TransaksiPegawai extends Model
             $menuBuilder = $db->table('menu');
             if ($oldTransaction['type'] === 'in') {
                 $menuBuilder->set('stok', 'stok - ' . intval($oldTransaction['quantity']), false);
-            } elseif ($oldTransaction['type'] === 'out') {
-                $menuBuilder->set('stok', 'stok + ' . intval($oldTransaction['quantity']), false);
-            }
-            $menuBuilder->where('id', intval($oldTransaction['id_menu']));
-            $menuBuilder->update();
+                $menuBuilder->where('id', intval($oldTransaction['id_menu']));
+                $menuBuilder->update();
+            } 
 
             // Kurangi atau tambahkan stok dari transaksi baru
             if ($type === 'in') {
                 $menuBuilder->set('stok', 'stok - ' . intval($quantity), false);
-            } elseif ($type === 'out') {
-                $menuBuilder->set('stok', 'stok + ' . intval($quantity), false);
+                $menuBuilder->where('id', intval($id_menu));
+                $menuBuilder->update();
             }
-            $menuBuilder->where('id', intval($id_menu));
-            $menuBuilder->update();
         }
 
         if ($db->transComplete()) {

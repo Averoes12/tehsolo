@@ -21,6 +21,7 @@ class Modelmenuminuman extends Model
         }
         $builder->like('menu.nama_menu', $cari);
         $builder->groupBy('menu.id');
+        $builder->orderBy('menu.id', 'DESC');
         $query = $builder->get();
 
         return $query->getResultArray();
@@ -60,6 +61,7 @@ class Modelmenuminuman extends Model
             $builder->where('cabang.id', session('id_cabang'));
         }
         $builder->groupBy('menu.id');
+        $builder->orderBy('menu.id', 'DESC');
         $query = $builder->get();
 
         return $query->getResultArray();
