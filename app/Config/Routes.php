@@ -55,8 +55,8 @@ $routes->get('owner/transaksi/getMenuByCabang', 'Owner\Transaksi::getMenuByCaban
 $routes->get('owner/transaksi/getAllCabang', 'Owner\Transaksi::getAllCabang', ['filter' => 'ownerFilter']);
 $routes->get('owner/transaksi/print', 'Owner\Transaksi::print', ['filter' => 'ownerFilter']);
 $routes->get('owner/transaksi/generate/(:segment)', 'Owner\Transaksi::generate/$1', ['filter'=> 'ownerFilter']);
-$routes->get('owner/transaksi/cancelTrx/(:segment)', 'Owner\Transaksi::cancelTrx/$1', ['owner'=> 'ownerFilter']);
-$routes->get('owner/transaksi/getDetailTransaksi/(:segment)', 'Owner\Transaksi::getDetailTransaksi/$1', ['owner'=> 'ownerFilter']);
+$routes->get('owner/transaksi/cancelTrx/(:segment)', 'Owner\Transaksi::cancelTrx/$1', ['filter'=> 'ownerFilter']);
+$routes->get('owner/transaksi/getDetailTransaksi/(:segment)', 'Owner\Transaksi::getDetailTransaksi/$1', ['filter'=> 'ownerFilter']);
 
 
 //Pegawai
@@ -72,6 +72,13 @@ $routes->get('pegawai/transaksi/edit/(:segment)', 'Pegawai\Transaksi::edit/$1', 
 $routes->get('pegawai/transaksi/editPengeluaran/(:segment)', 'Pegawai\Transaksi::editPengeluaran/$1', ['filter' => 'pegawaiFilter']);
 $routes->post('pegawai/transaksi/update/(:segment)', 'Pegawai\Transaksi::update/$1', ['filter' => 'pegawaiFilter']);
 $routes->get('pegawai/transaksi/getMenuById/(:segment)', 'Pegawai\Transaksi::getMenuById/$1', ['filter' => 'pegawaiFilter']);
+$routes->get('pegawai/transaksi/print', 'Pegawai\Transaksi::print', ['filter' => 'pegawaiFilter']);
+$routes->get('pegawai/transaksi/generate/(:segment)', 'Pegawai\Transaksi::generate/$1', ['filter'=> 'pegawaiFilter']);
+$routes->get('pegawai/transaksi/cancelTrx/(:segment)', 'Pegawai\Transaksi::cancelTrx/$1', ['filter'=> 'pegawaiFilter']);
+$routes->get('pegawai/transaksi/getDetailTransaksi/(:segment)', 'Pegawai\Transaksi::getDetailTransaksi/$1', ['filter'=> 'pegawaiFilter']);
+$routes->get('pegawai/transaksi/getMenuByCabang', 'Pegawai\Transaksi::getMenuByCabang', ['filter' => 'pegawaiFilter']);
+
+
 //menu
 $routes->get('pegawai/menu', 'Pegawai\Menu::data', ['filter' => 'pegawaiFilter']);
 $routes->get('pegawai/menu/data', 'Pegawai\Menu::data', ['filter' => 'pegawaiFilter']);

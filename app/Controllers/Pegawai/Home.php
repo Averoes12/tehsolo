@@ -10,12 +10,18 @@ class Home extends BaseController
     public function index()
     {
         $homeModel = new HomePegawaiModel();
+        $id_cabang = session('id_cabang');
 
-        $data['totalTransaksi'] = $homeModel->getTotalTransaksi();
-        $data['totalIncome'] = $homeModel->getTotalIncome();
-        $data['totalOutcome'] = $homeModel->getTotalOutcome();
-        $data['transaksiByTanggal'] = $homeModel->getTransaksiByTanggal();
-        $data['transaksiByMenu'] = $homeModel->getTransaksiByMenu();
+        $data['totalTransaksi'] = $homeModel->getTotalTransaksi($id_cabang);
+        $data['totalIncome'] = $homeModel->getTotalIncome($id_cabang);
+        $data['totalOutcome'] = $homeModel->getTotalOutcome($id_cabang);
+        $data['transaksiByTanggal'] = $homeModel->getTransaksiByTanggal($id_cabang);
+        $data['transaksiByCabang'] = $homeModel->getTransaksiByCabang($id_cabang);
+        $data['transaksiByMenu'] = $homeModel->getTransaksiByMenu($id_cabang);
+        $data['laporanKeuangan'] = $homeModel->getLaporanKeuanganPerCabang($id_cabang);
+        $data['total_in'] = $homeModel->getTotalPenjualan($id_cabang);
+        $data['total_out'] = $homeModel->getTotalPengeluaran($id_cabang);
+
 
         return view('pegawai/home', $data);
     }

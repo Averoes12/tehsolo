@@ -13,20 +13,22 @@ class TransaksiPegawai extends Model
     public function cariData($cari)
     {
         $builder = $this->table('transaksi');
-        $builder->select('transaksi.id, transaksi.type, transaksi.trx_date, transaksi.id_user, transaksi.barang, transaksi.id_menu, transaksi.nominal, transaksi.quantity, users.username as createby, menu.nama_menu, cabang.nama_cabang');
+        $builder->select('transaksi.id, transaksi.type, transaksi.trx_date, transaksi.id_user, transaksi.barang, transaksi.id_menu, transaksi.nominal, transaksi.quantity, a.username as createby, menu.nama_menu, cabang.nama_cabang, transaksi.cancelInd, b.username as updateby');
         $builder->join('menu', 'transaksi.id_menu = menu.id', 'left');
         $builder->join('cabang', 'menu.id_cabang = cabang.id', 'left');
-        $builder->join('users', 'transaksi.id_user = users.id', 'left');
+        $builder->join('users a', 'transaksi.createBy = a.id', 'left');
+        $builder->join('users b', 'transaksi.updateBy = b.id', 'left');
         $builder->where('transaksi.id_cabang', session('id_cabang'));
         $builder->like('menu.nama_menu', $cari);
         $builder->orLike('transaksi.barang', $cari);
+        $builder->groupBy('transaksi.trx_date');
         $builder->orderBy('transaksi.trx_date', 'DESC');
         $query = $builder->get();
 
         return $query->getResultArray();
     }
 
-    public function addTransaksi($type, $nominal, $quantity, $id_menu, $barang)
+    public function addTransaksi($type, $nominal, $quantity, $menus, $barang, $cabang)
     {
         $db = db_connect();
         $db->transStart();
@@ -36,9 +38,8 @@ class TransaksiPegawai extends Model
             'trx_date' => date('Y-m-d H:i:s'),
             'type' => $type,
             'nominal' => floatval($nominal),
-            'quantity' => intval($quantity),
-            'id_menu' => intval($id_menu),
             'barang' => $barang,
+            'quantity' => $quantity,
             'id_user' => session('id_user'),
             'id_cabang' => session('id_cabang'),
             'createby' => session('id_user'),
@@ -46,24 +47,48 @@ class TransaksiPegawai extends Model
         ];
 
         if ($builder->insert($data)) {
+            // Mendapatkan ID terakhir yang baru saja dimasukkan
+            $last_id = $db->insertID();
+
             // Update stok di tabel menu berdasarkan type
-            $menuBuilder = $db->table('menu');
-
             if ($type === 'in') {
-                $menuBuilder->set('stok', 'stok - ' . intval($quantity), false);
-                $menuBuilder->where('id', intval($id_menu));
-                $menuBuilder->update();
-            }
+                $trx_menu_builder = $db->table('transaksi_menu');
+                $menuBuilder = $db->table('menu');
+                for ($i = 0; $i < count($menus); $i++) {
+                    $item = [
+                        "id_transaksi" => $last_id,
+                        "id_menu" => $menus[$i]['id'],
+                        "qty" => $menus[$i]['qty'],
+                    ];
+                    $trx_menu_builder->insert($item);
 
+                    $menuBuilder->set('stok', 'stok - ' . intval($menus[$i]['qty']), false);
+                    $menuBuilder->where('id', intval($menus[$i]['id']));
+                    $menuBuilder->update();
+                }
+            }
+        } else {
+            // Tangkap error jika insert ke tabel transaksi gagal
+            $msg = [
+                'error' => 'Gagal menambah transaksi: ' . $db->error()
+            ];
+            return $msg;
         }
 
         if ($db->transComplete()) {
-            $msg = [
-                'sukses' => 'Tambah Transaksi Berhasil'
-            ];
+            if ($db->transStatus() === FALSE) {
+                $msg = [
+                    'error' => 'Gagal menyelesaikan transaksi: ' . $db->error()
+                ];
+            } else {
+                $msg = [
+                    'sukses' => 'Tambah Transaksi Berhasil'
+                ];
+            }
         } else {
+            // Tangkap error jika commit transaksi gagal
             $msg = [
-                'error' => 'Gagal menambah transaksi'
+                'error' => 'Gagal menambah transaksi: ' . $db->error()
             ];
         }
 
@@ -75,11 +100,14 @@ class TransaksiPegawai extends Model
     public function getAllData()
     {
         $builder = $this->table('transaksi');
-        $builder->select('transaksi.id, transaksi.type, transaksi.trx_date, transaksi.id_user, transaksi.barang, transaksi.id_menu, transaksi.nominal, transaksi.quantity, users.username as createby, menu.nama_menu, cabang.nama_cabang');
-        $builder->join('menu', 'transaksi.id_menu = menu.id', 'left');
+        $builder->select('transaksi.id, transaksi.type, transaksi.trx_date, transaksi.id_user, transaksi.barang, transaksi.id_menu, transaksi.nominal, a.qty quantity, b.username as createby, c.username as updateby, menu.nama_menu, cabang.nama_cabang, transaksi.cancelInd');
+        $builder->join('transaksi_menu a', 'a.id_transaksi = transaksi.id', 'left');
+        $builder->join('menu', 'a.id_menu = menu.id', 'left');
         $builder->join('cabang', 'transaksi.id_cabang = cabang.id', 'left');
-        $builder->join('users', 'transaksi.id_user = users.id', 'left');
+        $builder->join('users b', 'transaksi.createBy = b.id', 'left');
+        $builder->join('users c', 'transaksi.updateBy = c.id', 'left');
         $builder->where('transaksi.id_cabang', session('id_cabang'));
+        $builder->groupBy('transaksi.trx_date');
         $builder->orderBy('transaksi.trx_date', 'DESC');
         $query = $builder->get();
 
@@ -122,21 +150,6 @@ class TransaksiPegawai extends Model
 
             $builder->where('id', $trx_id);
             $builder->update($data);
-
-            // Kembalikan stok dari transaksi lama
-            $menuBuilder = $db->table('menu');
-            if ($oldTransaction['type'] === 'in') {
-                $menuBuilder->set('stok', 'stok - ' . intval($oldTransaction['quantity']), false);
-                $menuBuilder->where('id', intval($oldTransaction['id_menu']));
-                $menuBuilder->update();
-            } 
-
-            // Kurangi atau tambahkan stok dari transaksi baru
-            if ($type === 'in') {
-                $menuBuilder->set('stok', 'stok - ' . intval($quantity), false);
-                $menuBuilder->where('id', intval($id_menu));
-                $menuBuilder->update();
-            }
         }
 
         if ($db->transComplete()) {
@@ -155,13 +168,58 @@ class TransaksiPegawai extends Model
     public function getTrxById($id)
     {
         $builder = $this->table('transaksi');
-        $builder->select('transaksi.id, transaksi.type, transaksi.trx_date, transaksi.id_user, transaksi.id_menu, transaksi.nominal, transaksi.quantity, transaksi.createby, menu.nama_menu, cabang.nama_cabang');
-        $builder->join('menu', 'transaksi.id_menu = menu.id', 'left');
-        $builder->join('cabang', 'menu.id_cabang = cabang.id', 'left');
+        $builder->select('
+        transaksi.id, 
+        transaksi.trx_date, 
+        transaksi.id_user, 
+        transaksi.barang, 
+        transaksi.nominal, 
+        a.qty as quantity, 
+        users.username as createby, 
+        menu.nama_menu, 
+        cabang.nama_cabang,
+        menu.harga,
+        (a.qty * menu.harga) as sub_total
+    ');
+        $builder->join('transaksi_menu a', 'a.id_transaksi = transaksi.id', 'left');
+        $builder->join('menu', 'a.id_menu = menu.id', 'left');
+        $builder->join('cabang', 'transaksi.id_cabang = cabang.id', 'left');
         $builder->join('users', 'transaksi.id_user = users.id', 'left');
-        $builder->like('transaksi.id', $id);
+        $builder->where('transaksi.id', intval($id));
+        $builder->orderBy('transaksi.trx_date', 'DESC');
         $query = $builder->get();
 
         return $query->getResultArray();
+    }
+
+    public function cancelTrx($id)
+    {
+        $db = db_connect();
+        $db->transStart();
+
+        // Ambil data transaksi lama
+        $builder = $db->table('transaksi');
+        $data = [
+            'updateby' => session('id_user'),
+            'updatedt' => date('Y-m-d H:i:s'),
+            'cancelInd' => 'Y'
+        ];
+
+        $builder->where('id', $id);
+        $builder->update($data);
+        if ($db->transComplete()) {
+            $msg = [
+                'success' => true,
+                'msg' => 'Cancel Transaksi Berhasil'
+            ];
+        } else {
+            $msg = [
+                'success' => false,
+                'msg' => 'Gagal cancel transaksi'
+            ];
+        }
+
+        return $msg;
+
     }
 }

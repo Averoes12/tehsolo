@@ -23,7 +23,7 @@
                 </div>
                 <div class="form-group">
                     <label for="">Cabang</label>
-                    <select name="cabang" id="cabang" class="form-control select2">
+                    <select name="cabang" id="cabang" class="form-control select2 form-control-sm">
                         <option value="<?= $cabang['id'] ?>"><?= $cabang['nama_cabang'] ?></option>
                     </select>
                 </div>
@@ -38,6 +38,9 @@
 </div>
 <script>
     $(document).ready(function() {
+
+        $(".select2").select2
+
         $('.formsimpan').submit(function(e) {
             e.preventDefault();
 

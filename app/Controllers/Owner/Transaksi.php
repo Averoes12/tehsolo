@@ -302,7 +302,7 @@ class Transaksi extends BaseController
   public function generate($id)
   {
     $data = $this->transaksimodel->getTrxById($id);
-    $filename = date('y-m-d-H-i-s') . '-qadr-labs-report';
+    $filename = 'invoice-'.date('y-m-d-H-i-s');
 
     // instantiate and use the dompdf class
     $dompdf = new Dompdf();

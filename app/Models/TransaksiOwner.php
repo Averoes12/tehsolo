@@ -37,6 +37,7 @@ class TransaksiOwner extends Model
             'type' => $type,
             'nominal' => floatval($nominal),
             'barang' => $barang,
+            'quantity' => $quantity,
             'id_user' => session('id_user'),
             'id_cabang' => $cabang,
             'createby' => session('id_user'),
@@ -149,20 +150,6 @@ class TransaksiOwner extends Model
             $builder->where('id', $trx_id);
             $builder->update($data);
 
-            // Kembalikan stok dari transaksi lama
-            $menuBuilder = $db->table('menu');
-            if ($oldTransaction['type'] === 'in') {
-                $menuBuilder->set('stok', 'stok + ' . intval($old_qty), false);
-                $menuBuilder->where('id', intval($id_menu));
-                $menuBuilder->update();
-            }
-
-            // Kurangi atau tambahkan stok dari transaksi baru
-            if ($type === 'in') {
-                $menuBuilder->set('stok', 'stok - ' . intval($quantity), false);
-                $menuBuilder->where('id', intval($id_menu));
-                $menuBuilder->update();
-            }
         }
 
         if ($db->transComplete()) {

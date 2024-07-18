@@ -13,7 +13,7 @@
         <div class="form-group">
           <label for="">Cabang</label>
           <select name="cabang" id="cabang" class="form-control select2 form-control-sm" required>
-            <option value="">All</option>
+            <option value="0">All</option>
             <?php foreach ($cabang as $e) { ?>
               <option value="<?= $e['id'] ?>"><?= $e['nama_cabang'] ?></option>
             <?php } ?>

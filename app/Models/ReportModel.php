@@ -12,7 +12,10 @@ class ReportModel extends Model
   public function getTotalTransaksi($id_cabang)
   {
     return $this->select('COUNT(*) as total')
+    ->groupStart()
     ->where('id_cabang', $id_cabang)
+    ->where('transaksi.cancelInd', 'N')
+    ->groupEnd()
     ->get()
     ->getRow()
     ->total;
@@ -20,12 +23,12 @@ class ReportModel extends Model
 
   public function getTotalIncome($id_cabang)
   {
-    return $this->groupStart()->where('type', 'in')->where('id_cabang', $id_cabang)->groupEnd()->selectSum('nominal')->get()->getRow()->nominal;
+    return $this->groupStart()->where('type', 'in')->where('id_cabang', $id_cabang)->where('transaksi.cancelInd', 'N')->groupEnd()->selectSum('nominal')->get()->getRow()->nominal;
   }
 
   public function getTotalOutcome($id_cabang)
   {
-    return $this->groupStart()->where('type', 'out')->where('id_cabang', $id_cabang)->groupEnd()->selectSum('nominal')->get()->getRow()->nominal;
+    return $this->groupStart()->where('type', 'out')->where('id_cabang', $id_cabang)->where('transaksi.cancelInd', 'N')->groupEnd()->selectSum('nominal')->get()->getRow()->nominal;
   }
 
   public function getTransaksiByTanggal($id_cabang)
@@ -34,6 +37,7 @@ class ReportModel extends Model
       ->groupStart()
       ->where('type', 'in')
       ->where('id_cabang', $id_cabang)
+      ->where('transaksi.cancelInd', 'N')
       ->groupEnd()
       ->groupBy('DATE(trx_date)')
       ->findAll();
@@ -43,7 +47,10 @@ class ReportModel extends Model
   {
     return $this->select('id_cabang, cabang.nama_cabang, COUNT(transaksi.id) as total_transaksi')
       ->join('cabang', 'cabang.id = '.$id_cabang)
+      ->groupStart()
       ->where('type', 'in')
+      ->where('transaksi.cancelInd', 'N')
+      ->groupEnd()
       ->findAll();
   }
 
@@ -51,7 +58,10 @@ class ReportModel extends Model
   {
     return $this->select('id_menu, menu.nama_menu, COUNT(transaksi.quantity) as total_transaksi')
       ->join('menu', 'menu.id = id_menu')
+      ->groupStart()
       ->where('transaksi.id_cabang', $id_cabang)
+      ->where('transaksi.cancelInd', 'N')
+      ->groupEnd()
       ->groupBy('id_menu')
       ->findAll();
   }
@@ -66,7 +76,10 @@ class ReportModel extends Model
     )
       ->join('menu', 'transaksi.id_menu = menu.id', 'left')
       ->join('cabang', 'transaksi.id_cabang = cabang.id')
+      ->groupStart()
       ->where('transaksi.id_cabang', $id_cabang)
+      ->where('transaksi.cancelInd', 'N')
+      ->groupEnd()
       ->findAll();
   }
 
@@ -76,6 +89,7 @@ class ReportModel extends Model
       ->groupStart()
       ->where('type', 'in')
       ->where('id_cabang', $id_cabang)
+      ->where('transaksi.cancelInd', 'N')
       ->groupEnd()
       ->get()
       ->getRow()

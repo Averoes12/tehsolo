@@ -6,6 +6,7 @@ use App\Controllers\BaseController;
 use App\Models\Modelmenuminuman;
 use App\Models\CabangModel;
 use App\Models\TransaksiPegawai;
+use Dompdf\Dompdf;
 
 class Transaksi extends BaseController
 {
@@ -48,7 +49,7 @@ class Transaksi extends BaseController
   function formTambah()
   {
     if ($this->request->isAJAX()) {
-      $cabang = $this->cabangmodel->findAll();
+      $cabang = $this->cabangmodel->find(session('id_cabang'));
       $menu = $this->menuminuman
         ->groupStart()
         ->where('id_cabang', 0)
@@ -84,11 +85,11 @@ class Transaksi extends BaseController
       $type = $this->request->getVar('type');
       $nominal = $this->request->getVar('nominal');
       $quantity = $this->request->getVar('qty');
-      $id_menu = $this->request->getVar('menu');
+      $menus = $this->request->getVar('menus');
       $barang = $this->request->getVar('barang');
+      $cabang = $this->request->getVar('cabang');
 
-      $msg = $this->transaksimodel->addTransaksi($type, $nominal, $quantity, $id_menu, $barang);
-
+      $msg = $this->transaksimodel->addTransaksi($type, $nominal, $quantity, $menus, $barang, $cabang);
 
       echo json_encode($msg);
     } else {
@@ -250,5 +251,50 @@ class Transaksi extends BaseController
     } else {
       return $this->response->setJSON(['error' => 'Menu tidak ditemukan'], 404);
     }
+  }
+    public function getMenuByCabang()
+  {
+    $menuModel = new Modelmenuminuman();
+    $idCabang = $this->request->getGet('id');
+    $menus = $menuModel->where('id_cabang', $idCabang)->findAll();
+
+    return $this->response->setJSON($menus);
+  }
+
+  public function cancelTrx($id)
+  {
+    $msg = $this->transaksimodel->cancelTrx($id);
+
+    echo json_encode($msg);
+
+    return $msg;
+
+  }
+
+  public function getDetailTransaksi($id)
+  {
+    $trx = $this->transaksimodel->getTrxById($id);
+
+    return $this->response->setJSON($trx);
+  }
+
+  public function generate($id)
+  {
+    $data = $this->transaksimodel->getTrxById($id);
+    $filename = 'invoice-'.date('y-m-d-H-i-s');
+
+    // instantiate and use the dompdf class
+    $dompdf = new Dompdf();
+
+    // load HTML content
+    $dompdf->loadHtml(view('pegawai/transaksi/print', ['trx' => $data]));
+
+    // (optional) setup the paper size and orientation
+
+    // render html as PDF
+    $dompdf->render();
+
+    // output the generated pdf
+    $dompdf->stream($filename);
   }
 }
