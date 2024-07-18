@@ -41,4 +41,23 @@
         </p>
     </a>
 </li>
+<li class="nav-item">
+    <a href="#" class="nav-link">
+        <i class="nav-icon fas fa-file-alt"></i>
+        <p>
+            Laporan Cabang
+            <i class="right fas fa-angle-left"></i>
+        </p>
+    </a>
+    <ul class="nav nav-treeview">
+        <?php foreach ($cabang as $e) { ?>
+            <li class="nav-item">
+                <a href="<?= site_url('owner/report/'.$e['id']) ?>" class="nav-link">
+                    <i class="far fa-circle nav-icon"></i>
+                    <p><?= strlen($e['nama_cabang']) > 20 ? substr($e['nama_cabang'],0,20)."..." : $e['nama_cabang']; ?></p>
+                </a>
+            </li>
+        <?php } ?>
+    </ul>
+</li>
 <?= $this->endsection() ?>

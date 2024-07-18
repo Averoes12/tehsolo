@@ -15,13 +15,25 @@
   <div class="card-header">
     <form method="POST" action="<?= base_url('owner/transaksi/update/' . $trx['id']) ?>">
       <div class="card-body">
+        <input type="hidden" name="old_qty" value="<?= $trx['quantity'] ?>">
         <div class="form-group">
           <label for="type">Type</label>
           <input type="hidden" name="type" value="in">
         </div>
+        <div class="form-group" id="cabang-group">
+          <label for="">Cabang</label>
+          <select name="cabang" id="cabang" class="form-control select2 form-control-sm" required>
+            <option value="">All</option>
+            <?php foreach ($cabang as $e) { ?>
+              <option value="<?= $e['id'] ?>" <?= $e['id'] == $trx['id_cabang'] ? 'selected' : '' ?>>
+                <?= $e['nama_cabang'] ?>
+              </option>
+            <?php } ?>
+          </select>
+        </div>
         <div class="form-group" id="menu-group">
           <label>Nama Menu</label>
-          <select name="menu" id="menu" class="form-control select2 <?= ($validation->hasError('nama_menu')) ? 'is-invalid' : '' ?>">
+          <select name="menu" id="menu" class="form-control select2 form-control-sm <?= ($validation->hasError('nama_menu')) ? 'is-invalid' : '' ?>">
             <?php foreach ($menus as $e) : ?>
               <option value="<?= $e['id'] ?>" <?= $e['id'] == $trx['id_menu'] ? 'selected' : '' ?>>
                 <?= $e['nama_menu'] ?>

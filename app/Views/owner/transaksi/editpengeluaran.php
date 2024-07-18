@@ -19,6 +19,17 @@
           <label for="type">Type</label>
           <input type="hidden" name="type" value="out">
         </div>
+        <div class="form-group" id="cabang-group">
+          <label for="">Cabang</label>
+          <select name="cabang" id="cabang" class="form-control select2 form-control-sm" required>
+            <option value="">All</option>
+            <?php foreach ($cabang as $e) { ?>
+              <option value="<?= $e['id'] ?>" <?= $e['id'] == $trx['id_cabang'] ? 'selected' : '' ?>>
+                <?= $e['nama_cabang'] ?>
+              </option>
+            <?php } ?>
+          </select>
+        </div>
         <div class="form-group" id="barang-group">
           <label for="barang">Barang</label>
           <input type="text" name="barang" id="barang" class="form-control <?= ($validation->hasError('barang')) ? 'is-invalid' : '' ?>" value="<?= $trx['barang'] ?>">

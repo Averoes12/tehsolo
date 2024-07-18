@@ -44,7 +44,6 @@
                     <th>Quantity</th>
                     <th>Create By</th>
                     <th>Tipe</th>
-                    <th>Aksi</th>
                 </tr>
             </thead>
 
@@ -64,9 +63,6 @@
                         <td align="right"><?= number_format($row['quantity']) ?></td>
                         <td><?= $row['createby'] ?></td>
                         <td><span class="badge <?= $row['type'] == "in" ? 'bg-success' : 'bg-danger' ?>"><?= $row['type'] == "in" ? 'Pemasukan' : 'Pengeluaran' ?></span></td>
-                        <td align="right">
-                            <a href="<?= $row['type'] == "in" ?  base_url('pegawai/transaksi/edit/' . $data) : base_url('pegawai/transaksi/editPengeluaran/' . $data) ?>" class="btn btn-primary btn-sm"> <i class="fas fa-edit"></i></a>
-                        </td>
                     </tr>
                 <?php endforeach; } else { ?>
                   <td colspan="8" align="center">Nothing data found</td>

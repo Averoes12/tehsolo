@@ -1,4 +1,4 @@
-<?= $this->extend('owner/nav') ?>
+<?= $this->extend('owner/nav', $cabang) ?>
 
 <?= $this->section('judul') ?>
 <h3>Selamat Datang</h3>
@@ -10,6 +10,28 @@
     <div class="col-4">
         <div class="small-box bg-warning">
             <div class="inner">
+                <h3><?= $total_in; ?></h3>
+                <p>Transaksi Penjualan</p>
+            </div>
+            <div class="icon">
+                <i class="fas fa-shopping-cart"></i>
+            </div>
+        </div>
+    </div>
+    <div class="col-4">
+    <div class="small-box bg-warning">
+            <div class="inner">
+                <h3><?= $total_out; ?></h3>
+                <p>Transaksi Pembelian Bahan</p>
+            </div>
+            <div class="icon">
+                <i class="fas fa-shopping-cart"></i>
+            </div>
+        </div>
+    </div>
+    <div class="col-4">
+    <div class="small-box bg-warning">
+            <div class="inner">
                 <h3><?= $totalTransaksi; ?></h3>
                 <p>Total Transaksi</p>
             </div>
@@ -18,6 +40,8 @@
             </div>
         </div>
     </div>
+</div>
+<div class="row">
     <div class="col-4">
         <div class="small-box bg-success">
             <div class="inner">
@@ -34,6 +58,17 @@
             <div class="inner">
                 <h3>Rp <?= number_format(($totalOutcome > 0) ? $totalOutcome : 0.00); ?></h3>
                 <p>Total Pengeluaran</p>
+            </div>
+            <div class="icon">
+                <i class="fas fa-money-bill"></i>
+            </div>
+        </div>
+    </div>
+    <div class="col-4">
+        <div class="small-box bg-success">
+            <div class="inner">
+                <h3>Rp <?= number_format((($totalIncome - $totalOutcome) > 0) ? ($totalIncome - $totalOutcome) : 0.00); ?></h3>
+                <p>Total Keuntungan</p>
             </div>
             <div class="icon">
                 <i class="fas fa-money-bill"></i>

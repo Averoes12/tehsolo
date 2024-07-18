@@ -6,6 +6,7 @@ use App\Controllers\BaseController;
 use App\Models\Modelmenuminuman;
 use App\Models\CabangModel;
 use App\Models\TransaksiOwner;
+use Dompdf\Dompdf;
 
 class Transaksi extends BaseController
 {
@@ -68,8 +69,9 @@ class Transaksi extends BaseController
   function formPengeluaran()
   {
     if ($this->request->isAJAX()) {
+      $cabang = $this->cabangmodel->findAll();
       $msg = [
-        'data' => view('owner/transaksi/modalformpengeluaran')
+        'data' => view('owner/transaksi/modalformpengeluaran', ['cabang' => $cabang])
       ];
 
       echo json_encode($msg);
@@ -84,11 +86,11 @@ class Transaksi extends BaseController
       $type = $this->request->getVar('type');
       $nominal = $this->request->getVar('nominal');
       $quantity = $this->request->getVar('qty');
-      $id_menu = $this->request->getVar('menu');
+      $menus = $this->request->getVar('menus');
       $barang = $this->request->getVar('barang');
+      $cabang = $this->request->getVar('cabang');
 
-      $msg = $this->transaksimodel->addTransaksi($type, $nominal, $quantity, $id_menu, $barang);
-
+      $msg = $this->transaksimodel->addTransaksi($type, $nominal, $quantity, $menus, $barang, $cabang);
 
       echo json_encode($msg);
     } else {
@@ -113,6 +115,7 @@ class Transaksi extends BaseController
         ->groupEnd()
         ->findAll(),
       'menu' => $this->menuminuman->find($id_menu),
+      'cabang' => $this->cabangmodel->findAll(),
       'validation' => \Config\Services::validation(),
     ];
 
@@ -128,6 +131,7 @@ class Transaksi extends BaseController
     $data = [
       'title' => 'Edit Transaksi',
       'trx' =>  $this->transaksimodel->find($id_trx),
+      'cabang' => $this->cabangmodel->findAll(),
       'validation' => \Config\Services::validation(),
     ];
 
@@ -142,6 +146,8 @@ class Transaksi extends BaseController
     $quantity = $this->request->getVar('qty');
     $id_menu = $this->request->getVar('menu');
     $barang = $this->request->getVar('barang');
+    $old_qty = $this->request->getVar('old_qty');
+    $cabang = $this->request->getVar('cabang');
 
     $rules = [];
     if ($type == "out") {
@@ -153,15 +159,17 @@ class Transaksi extends BaseController
           ]
         ],
         'harga' => [
-          'rules' => 'required',
+          'rules' => 'required|greater_than[0]',
           'errors' => [
             'required' => 'Harga wajib diisi',
+            'greater_than' => 'Harga tidak boleh 0'
           ]
         ],
         'qty' => [
-          'rules' => 'required',
+          'rules' => 'required|greater_than[0]',
           'errors' => [
             'required' => 'Quantity wajib diisi',
+            'greater_than' => 'Quantity tidak boleh 0'
           ]
         ],
         'nominal' => [
@@ -181,9 +189,10 @@ class Transaksi extends BaseController
           ]
         ],
         'qty' => [
-          'rules' => 'required',
+          'rules' => 'required|greater_than[0]',
           'errors' => [
             'required' => 'Quantity wajib diisi',
+            'greater_than' => 'Quantity tidak boleh 0'
           ]
         ],
         'nominal' => [
@@ -205,6 +214,7 @@ class Transaksi extends BaseController
           ->groupEnd()
           ->findAll(),
         'menu' => $this->menuminuman->find($id_menu),
+        'cabang' => $this->cabangmodel->findAll(),
         'validation' => \Config\Services::validation()
       ];
 
@@ -214,10 +224,10 @@ class Transaksi extends BaseController
         echo view('owner/transaksi/editpengeluaran', $data);
       }
     } else {
-      $msg = $this->transaksimodel->updateTransaksi($id_trx, $type, $nominal, $quantity, $id_menu, $barang);
+      $msg = $this->transaksimodel->updateTransaksi($id_trx, $type, $nominal, $quantity, $id_menu, $barang, $old_qty, $cabang);
 
       echo json_encode($msg);
-
+      
       session()->setFlashdata('berhasil', 'Data Transaksi Berhasil Diedit');
       return redirect()->to(base_url('owner/transaksi/data'));
     }
@@ -249,5 +259,63 @@ class Transaksi extends BaseController
     } else {
       return $this->response->setJSON(['error' => 'Menu tidak ditemukan'], 404);
     }
+  }
+  public function getMenuByCabang()
+  {
+    $menuModel = new Modelmenuminuman();
+    $idCabang = $this->request->getGet('id');
+    $menus = $menuModel->where('id_cabang', $idCabang)->findAll();
+
+    return $this->response->setJSON($menus);
+  }
+
+  public function getAllCabang()
+  {
+    $cabangs = $this->cabangmodel->findAll();
+
+    return $this->response->setJSON($cabangs);
+  }
+
+  public function print()
+  {
+
+    return view('owner/transaksi/print');
+  }
+
+  public function cancelTrx($id)
+  {
+    $msg = $this->transaksimodel->cancelTrx($id);
+
+    echo json_encode($msg);
+
+    return $msg;
+
+  }
+
+  public function getDetailTransaksi($id)
+  {
+    $trx = $this->transaksimodel->getTrxById($id);
+
+    return $this->response->setJSON($trx);
+  }
+
+  public function generate($id)
+  {
+    $data = $this->transaksimodel->getTrxById($id);
+    $filename = date('y-m-d-H-i-s') . '-qadr-labs-report';
+
+    // instantiate and use the dompdf class
+    $dompdf = new Dompdf();
+
+    // load HTML content
+    $dompdf->loadHtml(view('owner/transaksi/print', ['trx' => $data]));
+
+    // (optional) setup the paper size and orientation
+
+    // render html as PDF
+    $dompdf->render();
+
+    // output the generated pdf
+    $dompdf->stream($filename);
   }
 }

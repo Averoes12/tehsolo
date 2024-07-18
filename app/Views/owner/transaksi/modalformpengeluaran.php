@@ -11,6 +11,15 @@
       <div class="modal-body">
         <input type="hidden" name="type" value="out">
         <div class="form-group">
+          <label for="">Cabang</label>
+          <select name="cabang" id="cabang" class="form-control select2 form-control-sm" required>
+            <option value="">All</option>
+            <?php foreach ($cabang as $e) { ?>
+              <option value="<?= $e['id'] ?>"><?= $e['nama_cabang'] ?></option>
+            <?php } ?>
+          </select>
+        </div>
+        <div class="form-group">
           <label for="barangOut">Barang</label>
           <input type="text" name="barang" id="barangOut" class="form-control form-control-sm" required>
         </div>
@@ -38,7 +47,7 @@
 
 <script>
   $(document).ready(function() {
-    $('#menuOut').select2();
+    $('.select2').select2();
 
     $('.formsimpan').submit(function(e) {
       e.preventDefault();

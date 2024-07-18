@@ -4,51 +4,58 @@ namespace App\Models;
 
 use CodeIgniter\Model;
 
-class HomeModel extends Model
+class ReportModel extends Model
 {
   protected $table = 'transaksi';
   protected $primaryKey = 'id';
 
-  public function getTotalTransaksi()
+  public function getTotalTransaksi($id_cabang)
   {
-    return $this->countAll();
+    return $this->select('COUNT(*) as total')
+    ->where('id_cabang', $id_cabang)
+    ->get()
+    ->getRow()
+    ->total;
   }
 
-  public function getTotalIncome()
+  public function getTotalIncome($id_cabang)
   {
-    return $this->where('type', 'in')->selectSum('nominal')->get()->getRow()->nominal;
+    return $this->groupStart()->where('type', 'in')->where('id_cabang', $id_cabang)->groupEnd()->selectSum('nominal')->get()->getRow()->nominal;
   }
 
-  public function getTotalOutcome()
+  public function getTotalOutcome($id_cabang)
   {
-    return $this->where('type', 'out')->selectSum('nominal')->get()->getRow()->nominal;
+    return $this->groupStart()->where('type', 'out')->where('id_cabang', $id_cabang)->groupEnd()->selectSum('nominal')->get()->getRow()->nominal;
   }
 
-  public function getTransaksiByTanggal()
+  public function getTransaksiByTanggal($id_cabang)
   {
     return $this->select('DATE(trx_date) as tanggal, COUNT(id) as total_transaksi')
+      ->groupStart()
       ->where('type', 'in')
+      ->where('id_cabang', $id_cabang)
+      ->groupEnd()
       ->groupBy('DATE(trx_date)')
       ->findAll();
   }
 
-  public function getTransaksiByCabang()
+  public function getTransaksiByCabang($id_cabang)
   {
     return $this->select('id_cabang, cabang.nama_cabang, COUNT(transaksi.id) as total_transaksi')
-      ->join('cabang', 'cabang.id = id_cabang')
+      ->join('cabang', 'cabang.id = '.$id_cabang)
       ->where('type', 'in')
-      ->groupBy('id_cabang')
       ->findAll();
   }
 
-  public function getTransaksiByMenu()
+  public function getTransaksiByMenu($id_cabang)
   {
     return $this->select('id_menu, menu.nama_menu, COUNT(transaksi.quantity) as total_transaksi')
       ->join('menu', 'menu.id = id_menu')
+      ->where('transaksi.id_cabang', $id_cabang)
       ->groupBy('id_menu')
       ->findAll();
   }
-  public function getLaporanKeuanganPerCabang()
+  public function getLaporanKeuanganPerCabang($id_cabang)
   {
     return $this->select(
       'cabang.nama_cabang,
@@ -58,24 +65,30 @@ class HomeModel extends Model
       SUM(CASE WHEN transaksi.type = "out" THEN transaksi.nominal ELSE 0 END) as profit'
     )
       ->join('menu', 'transaksi.id_menu = menu.id', 'left')
-      ->join('cabang', 'transaksi.id_cabang = cabang.id', 'left')
-      ->groupBy('cabang.nama_cabang')
+      ->join('cabang', 'transaksi.id_cabang = cabang.id')
+      ->where('transaksi.id_cabang', $id_cabang)
       ->findAll();
   }
 
-  public function getTotalPenjualan()
+  public function getTotalPenjualan($id_cabang)
   {
     return $this->select('COUNT(*) as total_in')
+      ->groupStart()
       ->where('type', 'in')
+      ->where('id_cabang', $id_cabang)
+      ->groupEnd()
       ->get()
       ->getRow()
       ->total_in;
   }
 
-  public function getTotalPengeluaran()
+  public function getTotalPengeluaran($id_cabang)
   {
     return $this->select('COUNT(*) as total_out')
+      ->groupStart()
       ->where('type', 'out')
+      ->where('id_cabang', $id_cabang)
+      ->groupEnd()
       ->get()
       ->getRow()
       ->total_out;
