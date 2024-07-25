@@ -28,17 +28,27 @@ class Users extends BaseController
             $cari = session()->get('cariusers');
         }
 
-        
+
+        $currentPage = $this->request->getVar('page') ? (int) $this->request->getVar('page') : 1;
+        $perPage = 15;
         $dataUsers = $cari ? $this->usersmodel->cariData($cari) : $this->usersmodel->getAllData();
         $cabang = $this->cabangmodel
+            ->select('cabang.id,cabang.nama_cabang,cabang.alamat,cabang.telepon,users.id_cabang')
             ->join('users', 'users.id_cabang = cabang.id', 'left')
             ->where('users.id_cabang', null)
             ->findAll();
+        // dd($cabang);
+        $total = count($dataUsers);
+
 
         $data = [
             'datausers' => $dataUsers,
             'cabang' => $cabang,
             'cari' => $cari,
+            'pager' => $this->usersmodel->pager,
+            'currentPage' => $currentPage,
+            'perPage' => $perPage,
+            'total' => $total,
         ];
         return view('owner/users/data', $data);
     }
@@ -80,7 +90,6 @@ class Users extends BaseController
             $role = $this->request->getVar('role');
             $id_cabang = $this->request->getVar('id_cabang');
 
-
             $msg = $this->usersmodel->addUser($username, $password, $role, $id_cabang);
             echo json_encode($msg);
         } else {
@@ -108,7 +117,7 @@ class Users extends BaseController
     {
         $data = [
             'title' => 'Edit User',
-            'user' =>  $this->usersmodel->find($id),
+            'user' => $this->usersmodel->find($id),
             'cabang' => $this->cabangmodel->findAll(),
             'validation' => \Config\Services::validation()
         ];
@@ -119,7 +128,7 @@ class Users extends BaseController
     function update($id)
     {
         $username = $this->request->getPost('username');
-        $password =  $this->request->getPost('password');
+        $password = $this->request->getPost('password');
         $id_cabang = $this->request->getPost('id_cabang');
 
         $rules = [
@@ -153,11 +162,11 @@ class Users extends BaseController
             ];
             echo view('owner/users/edit', $data);
         } else {
-            
+
             $msg = $this->usersmodel->updateUser($username, $password, $id_cabang, $id);
 
             echo json_encode($msg);
-            
+
             return redirect()->to(base_url('owner/users/data'));
         }
     }

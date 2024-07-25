@@ -28,13 +28,21 @@ class Menu extends BaseController
             $cari = session()->get('carimenu');
         }
 
-        $dataMenu = $cari ? $this->menuminuman->cariData($cari) : $this->menuminuman->getAllData();
+        $currentPage = $this->request->getVar('page') ? (int) $this->request->getVar('page') : 1;
+        $perPage = 15;
+        $dataMenu = $cari ? $this->menuminuman->cariData($cari, $perPage, $currentPage) : $this->menuminuman->getAllData($perPage, $currentPage);
         $cabang = $this->cabangmodel->findAll();
+        $total = count($dataMenu);
+
 
         $data = [
             'datamenu' => $dataMenu,
             'cabang' => $cabang,
-            'cari' => $cari
+            'cari' => $cari,
+            'pager' => $this->menuminuman->pager,
+            'currentPage' => $currentPage,
+            'perPage' => $perPage,
+            'total' => $total,
         ];
         return view('owner/menu/data', $data);
     }

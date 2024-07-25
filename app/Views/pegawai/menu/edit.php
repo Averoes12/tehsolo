@@ -17,7 +17,9 @@
             <div class="card-body">
                 <div class="form-group">
                     <label>Nama Menu</label>
-                    <input type="text" class="form-control <?= ($validation->hasError('namamenu')) ? 'is-invalid' : '' ?>" name="namamenu" placeholder="Nama Menu" value="<?= $menu['nama_menu'] ?>">
+                    <input type="text"
+                        class="form-control <?= ($validation->hasError('namamenu')) ? 'is-invalid' : '' ?>"
+                        name="namamenu" placeholder="Nama Menu" value="<?= $menu['nama_menu'] ?>" readonly>
                     <?php if ($validation->hasError('namamenu')): ?>
                         <div class="invalid-feedback">
                             <?= $validation->getError('namamenu') ?>
@@ -26,7 +28,9 @@
                 </div>
                 <div class="form-group">
                     <label>Harga</label>
-                    <input type="number" min="1" class="form-control <?= ($validation->hasError('harga')) ? 'is-invalid' : '' ?>" name="harga" placeholder="Harga" value="<?= $menu['harga'] ?>">
+                    <input type="number" min="1"
+                        class="form-control <?= ($validation->hasError('harga')) ? 'is-invalid' : '' ?>" name="harga"
+                        placeholder="Harga" value="<?= $menu['harga'] ?>" readonly>
                     <?php if ($validation->hasError('harga')): ?>
                         <div class="invalid-feedback">
                             <?= $validation->getError('harga') ?>
@@ -35,7 +39,9 @@
                 </div>
                 <div class="form-group">
                     <label>Stok</label>
-                    <input type="number" min="0" class="form-control <?= ($validation->hasError('stok')) ? 'is-invalid' : '' ?>" name="stok" placeholder="Stok" value="<?= $menu['stok'] ?>">
+                    <input type="number" min="0"
+                        class="form-control <?= ($validation->hasError('stok')) ? 'is-invalid' : '' ?>" name="stok"
+                        placeholder="Stok" value="<?= $menu['stok'] ?>">
                     <?php if ($validation->hasError('stok')): ?>
                         <div class="invalid-feedback">
                             <?= $validation->getError('stok') ?>
@@ -44,12 +50,13 @@
                 </div>
                 <div class="form-group">
                     <label>Cabang</label>
-                    <select name="cabang" class="form-control <?= ($validation->hasError('id_cabang')) ? 'is-invalid' : '' ?>">
+                    <select name="cabang"
+                        class="form-control <?= ($validation->hasError('id_cabang')) ? 'is-invalid' : '' ?>">
                         <option value="<?= $cabang['id'] ?>" <?= $cabang['id'] == $menu['id_cabang'] ? 'selected' : '' ?>>
                             <?= $cabang['nama_cabang'] ?>
                         </option>
                     </select>
-                    <?php if ($validation->hasError('id_cabang')) : ?>
+                    <?php if ($validation->hasError('id_cabang')): ?>
                         <div class="invalid-feedback">
                             <?= $validation->getError('id_cabang') ?>
                         </div>

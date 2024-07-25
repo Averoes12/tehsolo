@@ -24,15 +24,29 @@ class Transaksi extends BaseController
   public function data()
   {
     $tombolCari = $this->request->getPost('tomboltransaksi');
-    if (isset($tombolCari)) {
+    $filter = $this->request->getPost('filter');
+    if (isset($tombolCari) || isset($filter)) {
       $cari = $this->request->getPost('caritransaksi');
+      $type = $this->request->getPost('type');
+      session()->set('type', $type);
       session()->set('caritransaksi', $cari);
       return redirect()->to(base_url('pegawai/transaksi/data'));
     } else {
       $cari = session()->get('caritransaksi');
+      $type = session()->get('type');
     }
 
-    $datatrx = $cari ? $this->transaksimodel->cariData($cari) : $this->transaksimodel->getAllData();
+    $currentPage = $this->request->getVar('page') ? (int) $this->request->getVar('page') : 1;
+    $perPage = 15;
+
+    if ($cari || $type) {
+      $datatrx = $this->transaksimodel->cariData($cari, $type, $perPage, $currentPage);
+      $total = count($datatrx);
+    } else {
+      $datatrx = $this->transaksimodel->getAllData($perPage, $currentPage);
+      $total = count($datatrx);
+    }
+
     $cabang = $this->cabangmodel->findAll();
     $menu = $this->menuminuman->findAll();
 
@@ -40,7 +54,13 @@ class Transaksi extends BaseController
       'datatrx' => $datatrx,
       'cabang' => $cabang,
       'menu' => $menu,
-      'cari' => $cari
+      'cari' => $cari,
+      'selectedType' => $type,
+      'selectedCabang' => $cabang,
+      'pager' => $this->transaksimodel->pager,
+      'currentPage' => $currentPage,
+      'perPage' => $perPage,
+      'total' => $total,
     ];
     return view('pegawai/transaksi/data', $data);
   }
@@ -107,7 +127,7 @@ class Transaksi extends BaseController
 
     $data = [
       'title' => 'Edit Transaksi',
-      'trx' =>  $this->transaksimodel->find($id_trx),
+      'trx' => $this->transaksimodel->find($id_trx),
       'menus' => $this->menuminuman->groupStart()
         ->where('id_cabang', 0)
         ->orWhere('id_cabang', session('id_cabang'))
@@ -129,7 +149,7 @@ class Transaksi extends BaseController
 
     $data = [
       'title' => 'Edit Transaksi',
-      'trx' =>  $this->transaksimodel->find($id_trx),
+      'trx' => $this->transaksimodel->find($id_trx),
       'validation' => \Config\Services::validation(),
     ];
 
@@ -200,7 +220,7 @@ class Transaksi extends BaseController
     if (!$this->validate($rules)) {
       $data = [
         'title' => 'Edit Transaksi',
-        'trx' =>  $this->transaksimodel->find($id_trx),
+        'trx' => $this->transaksimodel->find($id_trx),
         'menus' => $this->menuminuman->groupStart()
           ->where('id_cabang', 0)
           ->orWhere('id_cabang', session('id_cabang'))
@@ -252,7 +272,7 @@ class Transaksi extends BaseController
       return $this->response->setJSON(['error' => 'Menu tidak ditemukan'], 404);
     }
   }
-    public function getMenuByCabang()
+  public function getMenuByCabang()
   {
     $menuModel = new Modelmenuminuman();
     $idCabang = $this->request->getGet('id');
@@ -281,7 +301,7 @@ class Transaksi extends BaseController
   public function generate($id)
   {
     $data = $this->transaksimodel->getTrxById($id);
-    $filename = 'invoice-'.date('y-m-d-H-i-s');
+    $filename = 'invoice-' . date('y-m-d-H-i-s');
 
     // instantiate and use the dompdf class
     $dompdf = new Dompdf();

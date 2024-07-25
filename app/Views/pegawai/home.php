@@ -7,6 +7,24 @@
 
 <?= $this->section('isi') ?>
 <div class="row">
+    <div class="col-lg-9 mb-3">
+    </div>
+    <div class="col-lg-3 mb-3 text-right">
+        <form method="POST" action="<?= base_url('pegawai/home') ?>">
+            <?= csrf_field(); ?>
+            <div class="input-group">
+                <div class="input-group-prepend">
+                    <span class="input-group-text">
+                        <i class="far fa-calendar-alt"></i>
+                    </span>
+                </div>
+                <input type="text" class="form-control float-right mr-2" name="date" value="<?= $date_range ?>" id="filter-date-range">
+                <button class="btn btn-primary btn-sm" type="submit" id="date-range" name="filter">Filter</button>
+            </div>
+        </form>
+    </div>
+</div>
+<div class="row">
     <div class="col-4">
         <div class="small-box bg-warning">
             <div class="inner">
@@ -176,4 +194,16 @@
         </div>
     </div>
 </div>
+<script type="text/javascript">
+    $(document).ready(function() {
+
+        $('#filter-date-range').daterangepicker({
+            timePicker: false,
+            locale: {
+                format: 'YYYY/MM/D hh:mm:ss'
+            }
+        });
+
+    });
+</script>
 <?= $this->endsection() ?>

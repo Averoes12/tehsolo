@@ -12,6 +12,9 @@ $routes->get('logout', 'Login::logout');
 //Owner
 $routes->get('owner/home', 'Owner\Home::index', ['filter' => 'ownerFilter']);
 $routes->get('owner/report/(:segment)', 'Owner\Report::index/$1', ['filter' => 'ownerFilter']);
+$routes->post('owner/home', 'Owner\Home::index', ['filter' => 'ownerFilter']);
+$routes->post('owner/report/(:segment)', 'Owner\Report::index/$1', ['filter' => 'ownerFilter']);
+
 //menuminuman
 $routes->get('owner/menu', 'Owner\Menu::data', ['filter' => 'ownerFilter']);
 $routes->get('owner/menu/data', 'Owner\Menu::data', ['filter' => 'ownerFilter']);
@@ -54,13 +57,15 @@ $routes->get('owner/transaksi/getMenuById/(:segment)', 'Owner\Transaksi::getMenu
 $routes->get('owner/transaksi/getMenuByCabang', 'Owner\Transaksi::getMenuByCabang', ['filter' => 'ownerFilter']);
 $routes->get('owner/transaksi/getAllCabang', 'Owner\Transaksi::getAllCabang', ['filter' => 'ownerFilter']);
 $routes->get('owner/transaksi/print', 'Owner\Transaksi::print', ['filter' => 'ownerFilter']);
-$routes->get('owner/transaksi/generate/(:segment)', 'Owner\Transaksi::generate/$1', ['filter'=> 'ownerFilter']);
-$routes->get('owner/transaksi/cancelTrx/(:segment)', 'Owner\Transaksi::cancelTrx/$1', ['filter'=> 'ownerFilter']);
-$routes->get('owner/transaksi/getDetailTransaksi/(:segment)', 'Owner\Transaksi::getDetailTransaksi/$1', ['filter'=> 'ownerFilter']);
+$routes->get('owner/transaksi/generate/(:segment)', 'Owner\Transaksi::generate/$1', ['filter' => 'ownerFilter']);
+$routes->get('owner/transaksi/cancelTrx/(:segment)', 'Owner\Transaksi::cancelTrx/$1', ['filter' => 'ownerFilter']);
+$routes->get('owner/transaksi/getDetailTransaksi/(:segment)', 'Owner\Transaksi::getDetailTransaksi/$1', ['filter' => 'ownerFilter']);
+$routes->delete('owner/transaksi/hapus/(:segment)', 'Owner\Transaksi::hapus/$1', ['filter' => 'ownerFilter']);
 
 
 //Pegawai
 $routes->get('pegawai/home', 'Pegawai\Home::index', ['filter' => 'pegawaiFilter']);
+$routes->post('pegawai/home', 'Pegawai\Home::index', ['filter' => 'pegawaiFilter']);
 // transaksi
 $routes->get('pegawai/transaksi', 'Pegawai\Transaksi::data', ['filter' => 'pegawaiFilter']);
 $routes->get('pegawai/transaksi/data', 'Pegawai\Transaksi::data', ['filter' => 'pegawaiFilter']);
@@ -73,9 +78,9 @@ $routes->get('pegawai/transaksi/editPengeluaran/(:segment)', 'Pegawai\Transaksi:
 $routes->post('pegawai/transaksi/update/(:segment)', 'Pegawai\Transaksi::update/$1', ['filter' => 'pegawaiFilter']);
 $routes->get('pegawai/transaksi/getMenuById/(:segment)', 'Pegawai\Transaksi::getMenuById/$1', ['filter' => 'pegawaiFilter']);
 $routes->get('pegawai/transaksi/print', 'Pegawai\Transaksi::print', ['filter' => 'pegawaiFilter']);
-$routes->get('pegawai/transaksi/generate/(:segment)', 'Pegawai\Transaksi::generate/$1', ['filter'=> 'pegawaiFilter']);
-$routes->get('pegawai/transaksi/cancelTrx/(:segment)', 'Pegawai\Transaksi::cancelTrx/$1', ['filter'=> 'pegawaiFilter']);
-$routes->get('pegawai/transaksi/getDetailTransaksi/(:segment)', 'Pegawai\Transaksi::getDetailTransaksi/$1', ['filter'=> 'pegawaiFilter']);
+$routes->get('pegawai/transaksi/generate/(:segment)', 'Pegawai\Transaksi::generate/$1', ['filter' => 'pegawaiFilter']);
+$routes->get('pegawai/transaksi/cancelTrx/(:segment)', 'Pegawai\Transaksi::cancelTrx/$1', ['filter' => 'pegawaiFilter']);
+$routes->get('pegawai/transaksi/getDetailTransaksi/(:segment)', 'Pegawai\Transaksi::getDetailTransaksi/$1', ['filter' => 'pegawaiFilter']);
 $routes->get('pegawai/transaksi/getMenuByCabang', 'Pegawai\Transaksi::getMenuByCabang', ['filter' => 'pegawaiFilter']);
 
 

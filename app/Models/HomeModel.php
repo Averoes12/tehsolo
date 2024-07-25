@@ -9,66 +9,96 @@ class HomeModel extends Model
   protected $table = 'transaksi';
   protected $primaryKey = 'id';
 
-  public function getTotalTransaksi()
+  public function getTotalTransaksi($start_dt = null, $end_dt = null)
   {
-    return $this->select('COUNT(*) as total')
-    ->groupStart()
-    ->where('transaksi.cancelInd', 'N')
-    ->groupEnd()
-    ->get()
-    ->getRow()
-    ->total;
+    $builder = $this->select('COUNT(*) as total')
+      ->where('transaksi.cancelInd', 'N');
+
+    if ($start_dt && $end_dt) {
+      $builder->where('trx_date >=', $start_dt)
+        ->where('trx_date <=', $end_dt);
+    }
+
+    return $builder->get()->getRow()->total;
   }
 
-  public function getTotalIncome()
+  public function getTotalIncome($start_dt = null, $end_dt = null)
   {
-    return $this
-      ->groupStart()
-      ->where('type', 'in')
+    $builder = $this->where('type', 'in')
       ->where('cancelInd', 'N')
-      ->groupEnd()
-      ->selectSum('nominal')->get()->getRow()->nominal;
+      ->selectSum('nominal');
+
+    if ($start_dt && $end_dt) {
+      $builder->where('trx_date >=', $start_dt)
+        ->where('trx_date <=', $end_dt);
+    }
+
+    return $builder->get()->getRow()->nominal;
   }
 
-  public function getTotalOutcome()
+  public function getTotalOutcome($start_dt = null, $end_dt = null)
   {
-    return $this->where('type', 'out')->selectSum('nominal')->get()->getRow()->nominal;
+    $builder = $this->where('type', 'out')
+      ->selectSum('nominal');
+
+    if ($start_dt && $end_dt) {
+      $builder->where('trx_date >=', $start_dt)
+        ->where('trx_date <=', $end_dt);
+    }
+
+    return $builder->get()->getRow()->nominal;
   }
 
-  public function getTransaksiByTanggal()
+  public function getTransaksiByTanggal($start_dt = null, $end_dt = null)
   {
-    return $this->select('DATE(trx_date) as tanggal, COUNT(id) as total_transaksi')
-      ->groupStart()
+    $builder = $this->select('DATE(trx_date) as tanggal, COUNT(id) as total_transaksi')
       ->where('type', 'in')
       ->where('transaksi.cancelInd', 'N')
-      ->groupEnd()
-      ->groupBy('DATE(trx_date)')
-      ->findAll();
+      ->groupBy('DATE(trx_date)');
+
+    if ($start_dt && $end_dt) {
+      $builder->where('trx_date >=', $start_dt)
+        ->where('trx_date <=', $end_dt);
+    }
+
+    return $builder->findAll();
   }
 
-  public function getTransaksiByCabang()
+  public function getTransaksiByCabang($start_dt = null, $end_dt = null)
   {
-    return $this->select('id_cabang, cabang.nama_cabang, COUNT(transaksi.id) as total_transaksi')
+    $builder = $this->select('id_cabang, cabang.nama_cabang, COUNT(transaksi.id) as total_transaksi')
       ->join('cabang', 'cabang.id = id_cabang')
-      ->groupStart()
       ->where('type', 'in')
       ->where('transaksi.cancelInd', 'N')
-      ->groupEnd()
-      ->groupBy('id_cabang')
-      ->findAll();
+      ->groupBy('id_cabang');
+
+    if ($start_dt && $end_dt) {
+      $builder->where('trx_date >=', $start_dt)
+        ->where('trx_date <=', $end_dt);
+    }
+
+    return $builder->findAll();
   }
 
-  public function getTransaksiByMenu()
+  public function getTransaksiByMenu($start_dt = null, $end_dt = null)
   {
-    return $this->select('id_menu, menu.nama_menu, COUNT(transaksi.quantity) as total_transaksi')
-      ->join('menu', 'menu.id = id_menu')
+    $builder = $this->select('menu.nama_menu, COUNT(a.qty) as total_transaksi')
+      ->join('transaksi_menu a', 'a.id_transaksi = transaksi.id')
+      ->join('menu', 'menu.id = a.id_menu')
       ->where('transaksi.cancelInd', 'N')
-      ->groupBy('id_menu')
-      ->findAll();
+      ->groupBy('a.id_menu');
+
+    if ($start_dt && $end_dt) {
+      $builder->where('trx_date >=', $start_dt)
+        ->where('trx_date <=', $end_dt);
+    }
+
+    return $builder->findAll();
   }
-  public function getLaporanKeuanganPerCabang()
+
+  public function getLaporanKeuanganPerCabang($start_dt = null, $end_dt = null)
   {
-    return $this->select(
+    $builder = $this->select(
       'cabang.nama_cabang,
       SUM(CASE WHEN transaksi.type = "in" THEN transaksi.nominal ELSE 0 END) as total_income,
       SUM(CASE WHEN transaksi.type = "out" THEN transaksi.nominal ELSE 0 END) as total_outcome,
@@ -78,28 +108,40 @@ class HomeModel extends Model
       ->join('menu', 'transaksi.id_menu = menu.id', 'left')
       ->join('cabang', 'transaksi.id_cabang = cabang.id', 'left')
       ->where('transaksi.cancelInd', 'N')
-      ->groupBy('cabang.nama_cabang')
-      ->findAll();
+      ->groupBy('cabang.nama_cabang');
+
+    if ($start_dt && $end_dt) {
+      $builder->where('trx_date >=', $start_dt)
+        ->where('trx_date <=', $end_dt);
+    }
+
+    return $builder->findAll();
   }
 
-  public function getTotalPenjualan()
+  public function getTotalPenjualan($start_dt = null, $end_dt = null)
   {
-    return $this->select('COUNT(*) as total_in')
-      ->groupStart()
+    $builder = $this->select('COUNT(*) as total_in')
       ->where('type', 'in')
-      ->where('transaksi.cancelInd', 'N')
-      ->groupEnd()
-      ->get()
-      ->getRow()
-      ->total_in;
+      ->where('transaksi.cancelInd', 'N');
+
+    if ($start_dt && $end_dt) {
+      $builder->where('trx_date >=', $start_dt)
+        ->where('trx_date <=', $end_dt);
+    }
+
+    return $builder->get()->getRow()->total_in;
   }
 
-  public function getTotalPengeluaran()
+  public function getTotalPengeluaran($start_dt = null, $end_dt = null)
   {
-    return $this->select('COUNT(*) as total_out')
-      ->where('type', 'out')
-      ->get()
-      ->getRow()
-      ->total_out;
+    $builder = $this->select('COUNT(*) as total_out')
+      ->where('type', 'out');
+
+    if ($start_dt && $end_dt) {
+      $builder->where('trx_date >=', $start_dt)
+        ->where('trx_date <=', $end_dt);
+    }
+
+    return $builder->get()->getRow()->total_out;
   }
 }

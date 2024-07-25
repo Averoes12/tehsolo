@@ -26,13 +26,19 @@ class Cabang extends BaseController
             $cari = session()->get('caricabang');
         }
 
-        $dataCabang = $cari ? $this->cabangmodel->cariData($cari) : $this->cabangmodel->getAll();
-        $totalRows = $this->cabangmodel->getCount();
+        $currentPage = $this->request->getVar('page') ? (int) $this->request->getVar('page') : 1;
+        $perPage = 15;
+        $dataCabang = $cari ? $this->cabangmodel->cariData($cari, $perPage, $currentPage) : $this->cabangmodel->getAll($perPage, $currentPage);
+        $total = count($dataCabang);
 
 
         $data = [
-            'datacabang' => $dataCabang,
-            'cari' => $cari
+            'cabang' => $dataCabang,
+            'cari' => $cari,
+            'pager' => $this->cabangmodel->pager,
+            'currentPage' => $currentPage,
+            'perPage' => $perPage,
+            'total' => $total,
         ];
         return view('owner/cabang/data', $data);
     }
@@ -71,13 +77,13 @@ class Cabang extends BaseController
             return redirect()->back();
         }
     }
-    
+
 
     function edit($id_cabang)
     {
         $data = [
             'title' => 'Edit Cabang',
-            'cabang' =>  $this->cabangmodel->find($id_cabang),
+            'cabang' => $this->cabangmodel->find($id_cabang),
             'validation' => \Config\Services::validation()
         ];
 
@@ -128,7 +134,7 @@ class Cabang extends BaseController
             return redirect()->to(base_url('owner/cabang/data'));
         }
     }
-    
+
     function hapus($id_cabang)
     {
         if ($this->request->isAJAX()) {

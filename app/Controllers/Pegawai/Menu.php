@@ -29,13 +29,21 @@ class Menu extends BaseController
         }
 
 
+        $currentPage = $this->request->getVar('page') ? (int) $this->request->getVar('page') : 1;
+        $perPage = 15;
         $dataMenu = $cari ? $this->menuminuman->cariData($cari) : $this->menuminuman->getAllData();
         $cabang = $this->cabangmodel->findAll();
+        $total = count($dataMenu);
+
 
         $data = [
             'datamenu' => $dataMenu,
             'cabang' => $cabang,
-            'cari' => $cari
+            'cari' => $cari,
+            'pager' => $this->menuminuman->pager,
+            'currentPage' => $currentPage,
+            'perPage' => $perPage,
+            'total' => $total,
         ];
         return view('pegawai/menu/data', $data);
     }

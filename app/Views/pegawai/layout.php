@@ -24,6 +24,8 @@
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
     <!-- chart -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+    <!-- date range picker -->
+    <link rel="stylesheet" href="<?= base_url() ?>plugins/daterangepicker/daterangepicker.css">
 
     <style>
         .select2-container {
@@ -155,6 +157,10 @@
     <script src="<?= base_url() ?>/dist/js/demo.js"></script>
     <!-- select 2 -->
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <!-- moment js -->
+    <script src="<?= base_url() ?>plugins/moment/moment.min.js"></script>
+    <!-- date range picker -->
+    <script src="<?= base_url() ?>plugins/daterangepicker/daterangepicker.js"></script>
 
 
 

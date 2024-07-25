@@ -10,21 +10,19 @@ class CabangModel extends Model
     protected $primaryKey = 'id';
     protected $allowedFields = ['nama_cabang', 'alamat', 'telepon'];
 
-    public function cariData($cari)
+    public function cariData($cari, $perPage = 15, $currentPage = 1)
     {
         return $this->table($this->table)
-                    ->like('nama_cabang', $cari)
-                    ->orderBy('id', 'DESC')
-                    ->get()
-                    ->getResultArray();
+            ->like('nama_cabang', $cari)
+            ->orderBy('id', 'DESC')
+            ->paginate($perPage, 'default', $currentPage);
     }
 
-    public function getAll()
+    public function getAll($perPage = 15, $currentPage = 1)
     {
         return $this->table($this->table)
-                    ->orderBy('id', 'DESC')
-                    ->get()
-                    ->getResultArray();
+            ->orderBy('id', 'DESC')
+            ->paginate($perPage, 'default', $currentPage);
     }
 
     public function getCount()

@@ -1,4 +1,5 @@
-<div class="modal fade" id="modaltambahmenu" tabindex="-1" role="dialog" aria-labelledby="modaltambahmenu" aria-hidden="true">
+<div class="modal fade" id="modaltambahmenu" tabindex="-1" role="dialog" aria-labelledby="modaltambahmenu"
+    aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
@@ -15,7 +16,8 @@
                 </div>
                 <div class="form-group">
                     <label for="">Harga</label>
-                    <input type="number" name="hargamenu" id="hargamenu" class="form-control form-control-sm" min="1" required>
+                    <input type="number" name="hargamenu" id="hargamenu" class="form-control form-control-sm" min="1"
+                        required>
                 </div>
                 <div class="form-group">
                     <label for="">Stok</label>
@@ -37,11 +39,11 @@
     </div>
 </div>
 <script>
-    $(document).ready(function() {
+    $(document).ready(function () {
 
         $(".select2").select2
 
-        $('.formsimpan').submit(function(e) {
+        $('.formsimpan').submit(function (e) {
             e.preventDefault();
 
             $.ajax({
@@ -49,11 +51,11 @@
                 url: $(this).attr('action'),
                 data: $(this).serialize(),
                 dataType: "json",
-                beforeSend: function(e) {
+                beforeSend: function (e) {
                     $('.tombolSimpan').prop('disabled', true);
                     $('.tombolSimpan').html('<i class="fa fa-spin fa-spinner"></i>');
                 },
-                success: function(response) {
+                success: function (response) {
                     if (response.sukses) {
                         Swal.fire({
                             title: "berhasil",
@@ -68,7 +70,7 @@
 
                     }
                 },
-                error: function(xhr, ajaxOptions, thrownError) {
+                error: function (xhr, ajaxOptions, thrownError) {
                     alert(xhr.status + "\n" + xhr.responseText + "\n" + thrownError);
                 }
             });

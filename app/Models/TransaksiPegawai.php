@@ -6,26 +6,32 @@ use CodeIgniter\Model;
 
 class TransaksiPegawai extends Model
 {
-    protected $table      = 'transaksi';
+    protected $table = 'transaksi';
     protected $primaryKey = 'id';
 
 
-    public function cariData($cari)
+    public function cariData($cari, $type, $perPage, $currentPage)
     {
         $builder = $this->table('transaksi');
         $builder->select('transaksi.id, transaksi.type, transaksi.trx_date, transaksi.id_user, transaksi.barang, transaksi.id_menu, transaksi.nominal, transaksi.quantity, a.username as createby, menu.nama_menu, cabang.nama_cabang, transaksi.cancelInd, b.username as updateby');
-        $builder->join('menu', 'transaksi.id_menu = menu.id', 'left');
+        $builder->join('transaksi_menu c','c.id_transaksi = transaksi.id');
+        $builder->join('menu', 'c.id_menu = menu.id', 'left');
         $builder->join('cabang', 'menu.id_cabang = cabang.id', 'left');
         $builder->join('users a', 'transaksi.createBy = a.id', 'left');
         $builder->join('users b', 'transaksi.updateBy = b.id', 'left');
         $builder->where('transaksi.id_cabang', session('id_cabang'));
-        $builder->like('menu.nama_menu', $cari);
-        $builder->orLike('transaksi.barang', $cari);
+        if ($cari) {
+            $builder->groupStart()
+                ->like('menu.nama_menu', $cari)
+                ->orLike('transaksi.barang', $cari)
+                ->groupEnd();
+        }
+        if ($type) {
+            $builder->where('transaksi.type', $type);
+        }
         $builder->groupBy('transaksi.trx_date');
         $builder->orderBy('transaksi.trx_date', 'DESC');
-        $query = $builder->get();
-
-        return $query->getResultArray();
+        return $builder->paginate($perPage, 'default', $currentPage);
     }
 
     public function addTransaksi($type, $nominal, $quantity, $menus, $barang, $cabang)
@@ -97,7 +103,7 @@ class TransaksiPegawai extends Model
 
 
 
-    public function getAllData()
+    public function getAllData($perPage, $currentPage)
     {
         $builder = $this->table('transaksi');
         $builder->select('transaksi.id, transaksi.type, transaksi.trx_date, transaksi.id_user, transaksi.barang, transaksi.id_menu, transaksi.nominal, a.qty quantity, b.username as createby, c.username as updateby, menu.nama_menu, cabang.nama_cabang, transaksi.cancelInd');
@@ -109,9 +115,24 @@ class TransaksiPegawai extends Model
         $builder->where('transaksi.id_cabang', session('id_cabang'));
         $builder->groupBy('transaksi.trx_date');
         $builder->orderBy('transaksi.trx_date', 'DESC');
-        $query = $builder->get();
+        return $builder->paginate($perPage, 'default', $currentPage);
+    }
 
-        return $query->getResultArray();
+    public function getTotalData($cari = null, $type = null)
+    {
+        $builder = $this->table('transaksi');
+        $builder->where('transaksi.id_cabang', session('id_cabang'));
+        if ($cari) {
+            $builder->groupStart()
+                ->like('menu.nama_menu', $cari)
+                ->orLike('transaksi.barang', $cari)
+                ->groupEnd();
+        }
+
+        if ($type) {
+            $builder->where('transaksi.type', $type);
+        }
+        return $builder->countAllResults();
     }
 
     public function getCount()

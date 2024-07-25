@@ -24,23 +24,47 @@ class Transaksi extends BaseController
   public function data()
   {
     $tombolCari = $this->request->getPost('tomboltransaksi');
-    if (isset($tombolCari)) {
+    $filter = $this->request->getPost('filter');
+    if (isset($tombolCari) || isset($filter)) {
       $cari = $this->request->getPost('caritransaksi');
+      $branch_id = $this->request->getPost('branch_id');
+      $type = $this->request->getPost('type');
       session()->set('caritransaksi', $cari);
+      session()->set('branch_id', $branch_id);
+      session()->set('type', $type);
       return redirect()->to(base_url('owner/transaksi/data'));
     } else {
       $cari = session()->get('caritransaksi');
+      $branch_id = session()->get('branch_id');
+      $type = session()->get('type');
     }
 
-    $datatrx = $cari ? $this->transaksimodel->cariData($cari) : $this->transaksimodel->getAllData();
+    $currentPage = $this->request->getVar('page') ? (int) $this->request->getVar('page') : 1;
+    $perPage = 15;
+
+    if ($cari || $branch_id || $type) {
+      $datatrx = $this->transaksimodel->cariData($cari, $branch_id, $type, $perPage, $currentPage);
+      $total = $this->transaksimodel->getTotalData($cari, $branch_id, $type);
+    } else {
+      $datatrx = $this->transaksimodel->getAllData($perPage, $currentPage);
+      $total = $this->transaksimodel->getTotalData();
+    }
+
     $cabang = $this->cabangmodel->findAll();
     $menu = $this->menuminuman->findAll();
 
+    // dd($datatrx);
     $data = [
       'datatrx' => $datatrx,
       'cabang' => $cabang,
       'menu' => $menu,
-      'cari' => $cari
+      'cari' => $cari,
+      'selectedCabang' => $branch_id,
+      'selectedType' => $type,
+      'pager' => $this->transaksimodel->pager,
+      'currentPage' => $currentPage,
+      'perPage' => $perPage,
+      'total' => $total,
     ];
     return view('owner/transaksi/data', $data);
   }
@@ -108,7 +132,7 @@ class Transaksi extends BaseController
 
     $data = [
       'title' => 'Edit Transaksi',
-      'trx' =>  $this->transaksimodel->find($id_trx),
+      'trx' => $this->transaksimodel->find($id_trx),
       'menus' => $this->menuminuman->groupStart()
         ->where('id_cabang', 0)
         ->orWhere('id_cabang', session('id_cabang'))
@@ -130,7 +154,7 @@ class Transaksi extends BaseController
 
     $data = [
       'title' => 'Edit Transaksi',
-      'trx' =>  $this->transaksimodel->find($id_trx),
+      'trx' => $this->transaksimodel->find($id_trx),
       'cabang' => $this->cabangmodel->findAll(),
       'validation' => \Config\Services::validation(),
     ];
@@ -207,7 +231,7 @@ class Transaksi extends BaseController
     if (!$this->validate($rules)) {
       $data = [
         'title' => 'Edit Transaksi',
-        'trx' =>  $this->transaksimodel->find($id_trx),
+        'trx' => $this->transaksimodel->find($id_trx),
         'menus' => $this->menuminuman->groupStart()
           ->where('id_cabang', 0)
           ->orWhere('id_cabang', session('id_cabang'))
@@ -227,7 +251,7 @@ class Transaksi extends BaseController
       $msg = $this->transaksimodel->updateTransaksi($id_trx, $type, $nominal, $quantity, $id_menu, $barang, $old_qty, $cabang);
 
       echo json_encode($msg);
-      
+
       session()->setFlashdata('berhasil', 'Data Transaksi Berhasil Diedit');
       return redirect()->to(base_url('owner/transaksi/data'));
     }
@@ -236,13 +260,13 @@ class Transaksi extends BaseController
   function hapus($id_menu)
   {
     if ($this->request->isAJAX()) {
-      $cekdata = $this->menuminuman->find($id_menu);
+      $cekdata = $this->transaksimodel->find($id_menu);
 
       if ($cekdata) {
-        $this->menuminuman->delete($id_menu);
+        $this->transaksimodel->delete($id_menu);
 
         $json = [
-          'sukses' => 'Data Menu Berhasil Dihapus'
+          'sukses' => 'Data Transaksi Berhasil Dihapus'
         ];
         echo json_encode($json);
       }
@@ -302,7 +326,7 @@ class Transaksi extends BaseController
   public function generate($id)
   {
     $data = $this->transaksimodel->getTrxById($id);
-    $filename = 'invoice-'.date('y-m-d-H-i-s');
+    $filename = 'invoice-' . date('y-m-d-H-i-s');
 
     // instantiate and use the dompdf class
     $dompdf = new Dompdf();

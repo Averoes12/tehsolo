@@ -10,7 +10,7 @@ class UsersModel extends Model
     protected $primaryKey = 'id';
     protected $allowedFields = ['username', 'password', 'role'];
 
-    public function cariData($cari)
+    public function cariData($cari, $perPage = 15, $currentPage = 1)
     {
         $builder = $this->table('users');
         $builder->select('users.id, users.username, users.role, cabang.nama_cabang');
@@ -18,9 +18,8 @@ class UsersModel extends Model
         $builder->groupBy('users.id');
         $builder->like('username', $cari);
         $builder->orderBy('users.id', 'DESC');
-        $query = $builder->get();
 
-        return $query->getResultArray();
+        return $builder->paginate($perPage, 'default', $currentPage);
     }
 
     public function detailUsers($id_user)
@@ -31,16 +30,15 @@ class UsersModel extends Model
             ->first();
     }
 
-    public function getAllData()
+    public function getAllData($perPage = 15, $currentPage = 1)
     {
         $builder = $this->table('users');
         $builder->select('users.id, users.username, users.role, cabang.nama_cabang');
         $builder->join('cabang', 'users.id_cabang = cabang.id');
         $builder->groupBy('users.id');
         $builder->orderBy('users.id', 'DESC');
-        $query = $builder->get();
 
-        return $query->getResultArray();
+        return $builder->paginate($perPage, $currentPage);
     }
 
     public function getCount()

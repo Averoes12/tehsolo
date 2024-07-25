@@ -1,4 +1,5 @@
-<div class="modal fade" id="modaltambahmenu" tabindex="-1" role="dialog" aria-labelledby="modaltambahmenu" aria-hidden="true">
+<div class="modal fade" id="modaltambahmenu" tabindex="-1" role="dialog" aria-labelledby="modaltambahmenu"
+    aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
@@ -33,7 +34,7 @@
                 </div>
                 <div class="form-group">
                     <label for="">Cabang</label>
-                    <select name="cabang" id="cabang" class="form-control select2">
+                    <select name="id_cabang" id="id_cabang" class="form-control select2">
                         <?php foreach ($cabang as $e) { ?>
                             <option value="<?= $e['id'] ?>"><?= $e['nama_cabang'] ?></option>
                         <?php } ?>
@@ -49,8 +50,8 @@
     </div>
 </div>
 <script>
-    $(document).ready(function() {
-        $('.formsimpan').submit(function(e) {
+    $(document).ready(function () {
+        $('.formsimpan').submit(function (e) {
             e.preventDefault();
 
             $.ajax({
@@ -58,11 +59,11 @@
                 url: $(this).attr('action'),
                 data: $(this).serialize(),
                 dataType: "json",
-                beforeSend: function(e) {
+                beforeSend: function (e) {
                     $('.tombolSimpan').prop('disabled', true);
                     $('.tombolSimpan').html('<i class="fa fa-spin fa-spinner"></i>');
                 },
-                success: function(response) {
+                success: function (response) {
                     if (response.sukses) {
                         Swal.fire({
                             title: "berhasil",
@@ -77,18 +78,18 @@
 
                     }
                 },
-                error: function(xhr, ajaxOptions, thrownError) {
+                error: function (xhr, ajaxOptions, thrownError) {
                     alert(xhr.status + "\n" + xhr.responseText + "\n" + thrownError);
                 }
             });
         });
 
-        $("#toggle-hint-password").click(function(){
-            if($("#toggle-hint-password i").hasClass("fa-eye")){
+        $("#toggle-hint-password").click(function () {
+            if ($("#toggle-hint-password i").hasClass("fa-eye")) {
                 $("#toggle-hint-password i").removeClass("fa-eye");
                 $("#toggle-hint-password i").addClass("fa-eye-slash");
                 $("#password").attr("type", "password");
-            }else {
+            } else {
                 $("#toggle-hint-password i").removeClass("fa-eye-slash");
                 $("#toggle-hint-password i").addClass("fa-eye");
                 $("#password").attr("type", "text");

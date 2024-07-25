@@ -67,8 +67,8 @@
                 <?php } ?>
             </tbody>
         </table>
-
         <div class="float-center">
+            <?= $pager->links('default', 'paging_data') ?>
         </div>
         <!-- /.card-footer-->
     </div>

@@ -52,9 +52,10 @@
     <ul class="nav nav-treeview">
         <?php foreach ($cabang as $e) { ?>
             <li class="nav-item">
-                <a href="<?= site_url('owner/report/'.$e['id']) ?>" class="nav-link">
+                <a href="<?= site_url('owner/report/' . $e['id']) ?>" class="nav-link">
                     <i class="far fa-circle nav-icon"></i>
-                    <p><?= strlen($e['nama_cabang']) > 20 ? substr($e['nama_cabang'],0,20)."..." : $e['nama_cabang']; ?></p>
+                    <p><?= strlen($e['nama_cabang']) > 20 ? substr($e['nama_cabang'], 0, 20) . "..." : $e['nama_cabang']; ?>
+                    </p>
                 </a>
             </li>
         <?php } ?>

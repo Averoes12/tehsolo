@@ -11,7 +11,7 @@ class Modelmenuminuman extends Model
 
     protected $allowedFields = ['nama_menu', 'harga'];
 
-    public function cariData($cari)
+    public function cariData($cari, $perPage = 15, $currentPage = 1)
     {
         $builder = $this->table('menu');
         $builder->select('menu.id, menu.nama_menu, menu.harga, menu.stok, cabang.nama_cabang');
@@ -22,9 +22,8 @@ class Modelmenuminuman extends Model
         $builder->like('menu.nama_menu', $cari);
         $builder->groupBy('menu.id');
         $builder->orderBy('menu.id', 'DESC');
-        $query = $builder->get();
 
-        return $query->getResultArray();
+        return $builder->paginate($perPage, 'default', $currentPage);
 
     }
 
@@ -52,7 +51,7 @@ class Modelmenuminuman extends Model
         return $msg;
     }
 
-    public function getAllData()
+    public function getAllData($perPage = 15, $currentPage = 1)
     {
         $builder = $this->table('menu');
         $builder->select('menu.id, menu.nama_menu, menu.harga, menu.stok, cabang.nama_cabang');
@@ -62,9 +61,9 @@ class Modelmenuminuman extends Model
         }
         $builder->groupBy('menu.id');
         $builder->orderBy('menu.id', 'DESC');
-        $query = $builder->get();
+        
 
-        return $query->getResultArray();
+        return $builder->paginate($perPage, $currentPage);
     }
 
     public function getCount()
